@@ -1,0 +1,230 @@
+@import "tailwindcss";
+
+/* Design tokens from docs/prototipo.html. Light by default, dark via prefers-color-scheme or data-theme. */
+:root {
+  --paper: #f3eee4;
+  --card: #ffffff;
+  --ink: #161412;
+  --ink2: #4a443d;
+  --mute: #6b645c;
+  --line: #d9d2c5;
+  --line2: #eee8dc;
+  --red: #c4302b;
+  --red-d: #9e2a24;
+  --red-bg: #fbe9e8;
+  --red-line: #e3a8a5;
+  --ok: #3e8e53;
+  --ok-t: #2e6b3f;
+  --ok-bg: #e2f0e5;
+  --warn: #d98a2b;
+  --warn-t: #8a4b10;
+  --warn-bg: #fbeedc;
+  --info-t: #2e5e8c;
+  --info-bg: #e4ecf4;
+  --photo: #2a2622;
+  --photo2: #3a3430;
+  --photo-t: #c9c0b2;
+  --dark: #161412;
+  --dark-t: #f3eee4;
+  --dark-line: #3a3430;
+  --frame: #e6e0d4;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #1b1916;
+    --card: #242019;
+    --ink: #f3eee4;
+    --ink2: #d8d0c2;
+    --mute: #a79e90;
+    --line: #3a3430;
+    --line2: #2e2a25;
+    --red-bg: #3a1d1c;
+    --red-line: #6b2b28;
+    --ok-bg: #1f3324;
+    --warn-bg: #3a2a14;
+    --info-bg: #1d2a38;
+    --ok-t: #8fd09e;
+    --warn-t: #f2b872;
+    --info-t: #9bc3ea;
+    --frame: #121110;
+  }
+}
+
+:root[data-theme="dark"] {
+  --paper: #1b1916;
+  --card: #242019;
+  --ink: #f3eee4;
+  --ink2: #d8d0c2;
+  --mute: #a79e90;
+  --line: #3a3430;
+  --line2: #2e2a25;
+  --red-bg: #3a1d1c;
+  --red-line: #6b2b28;
+  --ok-bg: #1f3324;
+  --warn-bg: #3a2a14;
+  --info-bg: #1d2a38;
+  --ok-t: #8fd09e;
+  --warn-t: #f2b872;
+  --info-t: #9bc3ea;
+  --frame: #121110;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-card: var(--card);
+  --color-ink: var(--ink);
+  --color-ink2: var(--ink2);
+  --color-mute: var(--mute);
+  --color-line: var(--line);
+  --color-line2: var(--line2);
+  --color-red: var(--red);
+  --color-red-d: var(--red-d);
+  --color-red-bg: var(--red-bg);
+  --color-red-line: var(--red-line);
+  --color-ok: var(--ok);
+  --color-ok-t: var(--ok-t);
+  --color-ok-bg: var(--ok-bg);
+  --color-warn: var(--warn);
+  --color-warn-t: var(--warn-t);
+  --color-warn-bg: var(--warn-bg);
+  --color-info-t: var(--info-t);
+  --color-info-bg: var(--info-bg);
+  --color-photo: var(--photo);
+  --color-photo2: var(--photo2);
+  --color-photo-t: var(--photo-t);
+  --color-dark: var(--dark);
+  --color-dark-t: var(--dark-t);
+  --color-dark-line: var(--dark-line);
+  --color-frame: var(--frame);
+  --font-sans: var(--font-barlow), system-ui, sans-serif;
+  --font-display: var(--font-barlow-condensed), var(--font-barlow), sans-serif;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+}
+
+html {
+  height: 100%;
+  scroll-padding-top: env(safe-area-inset-top, 0px);
+}
+
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--frame);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (max-width: 519px) {
+  body {
+    background: var(--paper);
+  }
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid var(--red);
+  outline-offset: 2px;
+}
+
+/* Shared primitives used across the app (keeps markup close to the prototype). */
+.h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 38px;
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+.h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 19px;
+  line-height: 1.1;
+}
+.kicker {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--red);
+}
+.lead {
+  margin: 0;
+  color: var(--ink2);
+  font-size: 16px;
+}
+.mute {
+  color: var(--mute);
+  font-size: 13px;
+}
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+.chips {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+.chips::-webkit-scrollbar {
+  display: none;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--mute);
+}
+.field input,
+.field textarea,
+.field select {
+  font: inherit;
+  font-size: 16px;
+  color: var(--ink);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 10px 12px;
+  min-height: 46px;
+  width: 100%;
+}
+.field textarea {
+  resize: none;
+}
+.tbl {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.tbl td {
+  padding: 9px 6px;
+  border-bottom: 1px solid var(--line2);
+  vertical-align: top;
+}
+.tbl td:first-child {
+  white-space: nowrap;
+  color: var(--mute);
+}
