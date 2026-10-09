@@ -489,6 +489,7 @@ export type Database = {
           revisado_at: string | null;
           revisado_por_taller: boolean;
           revision_orden_id: string | null;
+          solicita_publicacion: boolean;
           titulo: string;
           updated_at: string;
           vendedor_id: string;
@@ -512,6 +513,7 @@ export type Database = {
           revisado_at?: string | null;
           revisado_por_taller?: boolean;
           revision_orden_id?: string | null;
+          solicita_publicacion?: boolean;
           titulo: string;
           updated_at?: string;
           vendedor_id: string;
@@ -534,6 +536,7 @@ export type Database = {
           revisado_at?: string | null;
           revisado_por_taller?: boolean;
           revision_orden_id?: string | null;
+          solicita_publicacion?: boolean;
           titulo?: string;
           updated_at?: string;
           vendedor_id?: string;

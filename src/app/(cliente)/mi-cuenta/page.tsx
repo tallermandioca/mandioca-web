@@ -128,9 +128,12 @@ export default async function MiCuenta() {
         </Link>
       ))}
 
-      <div className="grid grid-cols-2 gap-[10px]">
+      <div className="grid grid-cols-3 gap-[10px]">
         <BotonEnlace href="/mi-cuenta/ordenes" variante="borde" tamano="chico">
-          Mis órdenes
+          Órdenes
+        </BotonEnlace>
+        <BotonEnlace href="/mi-cuenta/publicaciones" variante="borde" tamano="chico">
+          En venta
         </BotonEnlace>
         <BotonEnlace href="/mi-cuenta/datos" variante="borde" tamano="chico">
           Mis datos

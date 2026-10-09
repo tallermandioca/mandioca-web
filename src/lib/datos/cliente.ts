@@ -105,3 +105,37 @@ export async function obtenerConfiguracionPublicaCliente() {
   const { data } = await supabase.from("configuracion_publica").select("*").maybeSingle();
   return data;
 }
+
+export type Publicacion = Tablas["publicaciones_venta"]["Row"] & {
+  fotos_publicacion: { id: string; url: string; orden: number }[];
+  instrumentos: {
+    id: string;
+    tipo: Database["public"]["Enums"]["tipo_instrumento"];
+    marca: string | null;
+    modelo: string | null;
+  } | null;
+};
+
+const SELECT_PUBLICACION = "*, fotos_publicacion(id, url, orden), instrumentos(id, tipo, marca, modelo)";
+
+/** Listings of this seller only (published listings of others are public, so RLS alone is not enough). */
+export async function misPublicaciones(vendedorId: string): Promise<Publicacion[]> {
+  const supabase = await crearClienteServidor();
+  const { data } = await supabase
+    .from("publicaciones_venta")
+    .select(SELECT_PUBLICACION)
+    .eq("vendedor_id", vendedorId)
+    .order("created_at", { ascending: false });
+  return (data ?? []) as Publicacion[];
+}
+
+export async function miPublicacion(id: string, vendedorId: string): Promise<Publicacion | null> {
+  const supabase = await crearClienteServidor();
+  const { data } = await supabase
+    .from("publicaciones_venta")
+    .select(SELECT_PUBLICACION)
+    .eq("id", id)
+    .eq("vendedor_id", vendedorId)
+    .maybeSingle();
+  return (data as Publicacion | null) ?? null;
+}

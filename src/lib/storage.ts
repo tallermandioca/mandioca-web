@@ -91,3 +91,28 @@ export async function subirFotoInstrumentoCliente(
   if (error) throw new Error(`No se pudo subir la foto: ${error.message}`);
   return supabase.storage.from(BUCKET_PUBLICO).getPublicUrl(nombre).data.publicUrl;
 }
+
+/** Client-uploaded listing photo (public bucket, client folder). */
+export async function subirFotoPublicacionCliente(
+  perfilId: string,
+  publicacionId: string,
+  file: File,
+): Promise<string> {
+  const supabase = await crearClienteServidor();
+  const nombre = `perfiles/${perfilId}/publicaciones/${publicacionId}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}.${extension(file)}`;
+  const { error } = await supabase.storage.from(BUCKET_PUBLICO).upload(nombre, file, {
+    contentType: file.type || "image/jpeg",
+    upsert: false,
+  });
+  if (error) throw new Error(`No se pudo subir la foto: ${error.message}`);
+  return supabase.storage.from(BUCKET_PUBLICO).getPublicUrl(nombre).data.publicUrl;
+}
+
+/** Removes a public-bucket object given its public URL (no-op for anything else). */
+export async function borrarFotoPublica(url: string): Promise<void> {
+  const marca = `/object/public/${BUCKET_PUBLICO}/`;
+  const i = url.indexOf(marca);
+  if (i < 0) return;
+  const supabase = await crearClienteServidor();
+  await supabase.storage.from(BUCKET_PUBLICO).remove([decodeURIComponent(url.slice(i + marca.length))]);
+}

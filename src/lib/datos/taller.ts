@@ -234,3 +234,13 @@ export async function ordenCompleta(id: string): Promise<OrdenCompleta | null> {
     : data.notas_internas_orden;
   return { ...data, notas_internas_orden: notas } as OrdenCompleta;
 }
+
+export async function publicacionesParaAprobar(): Promise<number> {
+  const supabase = await crearClienteServidor();
+  const { count } = await supabase
+    .from("publicaciones_venta")
+    .select("id", { count: "exact", head: true })
+    .eq("solicita_publicacion", true)
+    .neq("estado", "publicada");
+  return count ?? 0;
+}

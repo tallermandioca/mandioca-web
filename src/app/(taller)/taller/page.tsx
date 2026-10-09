@@ -5,7 +5,12 @@ import { ItemOrden } from "@/components/taller/Ordenes";
 import { BotonEnlace } from "@/components/ui/Boton";
 import { Nota } from "@/components/ui/Etiquetas";
 import { requerirRol } from "@/lib/auth";
-import { avisosEntre, cuentasPendientes, ordenesAbiertas } from "@/lib/datos/taller";
+import {
+  avisosEntre,
+  cuentasPendientes,
+  ordenesAbiertas,
+  publicacionesParaAprobar,
+} from "@/lib/datos/taller";
 import { aIsoFecha, formatearFechaLarga, nombreInstrumento } from "@/lib/formato";
 import { hoyArgentina, sumarDias } from "@/lib/hoy";
 
@@ -18,10 +23,11 @@ const DIA_CORTO = ["dom.", "lun.", "mar.", "mié.", "jue.", "vie.", "sáb."];
 export default async function PanelTaller() {
   await requerirRol("admin", "/taller");
   const hoy = hoyArgentina();
-  const [abiertas, avisos, pendientes] = await Promise.all([
+  const [abiertas, avisos, pendientes, paraAprobar] = await Promise.all([
     ordenesAbiertas(),
     avisosEntre(aIsoFecha(hoy), aIsoFecha(sumarDias(hoy, 7))),
     cuentasPendientes(),
+    publicacionesParaAprobar(),
   ]);
   const paraRetirar = abiertas.filter((o) => o.estado === "listo").length;
 
@@ -60,6 +66,21 @@ export default async function PanelTaller() {
             esperando que la{pendientes === 1 ? "" : "s"} vincules
           </span>
           <span className="font-semibold text-red">Ver</span>
+        </Link>
+      ) : null}
+
+      {paraAprobar > 0 ? (
+        <Link
+          href="/taller/muestrario"
+          className="flex items-center justify-between rounded-sm border border-warn bg-warn-bg px-[14px] py-3 text-sm no-underline text-ink"
+        >
+          <span>
+            <b>
+              {paraAprobar} publicaci{paraAprobar === 1 ? "ón" : "ones"}
+            </b>{" "}
+            esperando aprobación en el muestrario
+          </span>
+          <span className="font-semibold text-warn-t">Ver</span>
         </Link>
       ) : null}
 
