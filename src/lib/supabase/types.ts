@@ -433,6 +433,7 @@ export type Database = {
           canal_preferido: Database["public"]["Enums"]["canal_aviso"];
           created_at: string;
           email: string | null;
+          estado: Database["public"]["Enums"]["estado_perfil"];
           id: string;
           nombre: string;
           rol: Database["public"]["Enums"]["rol_perfil"];
@@ -446,6 +447,7 @@ export type Database = {
           canal_preferido?: Database["public"]["Enums"]["canal_aviso"];
           created_at?: string;
           email?: string | null;
+          estado?: Database["public"]["Enums"]["estado_perfil"];
           id?: string;
           nombre: string;
           rol?: Database["public"]["Enums"]["rol_perfil"];
@@ -458,6 +460,7 @@ export type Database = {
           canal_preferido?: Database["public"]["Enums"]["canal_aviso"];
           created_at?: string;
           email?: string | null;
+          estado?: Database["public"]["Enums"]["estado_perfil"];
           id?: string;
           nombre?: string;
           rol?: Database["public"]["Enums"]["rol_perfil"];
@@ -804,6 +807,7 @@ export type Database = {
     };
     Functions: {
       fn_es_admin: { Args: Record<PropertyKey, never>; Returns: boolean };
+      fn_hoy: { Args: Record<PropertyKey, never>; Returns: string };
       fn_perfil_id: { Args: Record<PropertyKey, never>; Returns: string };
       fn_transicion_valida: {
         Args: {
@@ -819,6 +823,7 @@ export type Database = {
       estado_instrumento_venta: "excelente" | "muy_bueno" | "bueno" | "regular";
       estado_orden:
         "recibido" | "presupuestado" | "aprobado" | "en_proceso" | "listo" | "entregado" | "cancelado";
+      estado_perfil: "pendiente" | "activo" | "bloqueado";
       estado_publicacion: "borrador" | "publicada" | "pausada" | "vendida";
       estado_recordatorio: "pendiente" | "enviado" | "pausado" | "cancelado";
       momento_foto: "antes" | "despues";
@@ -947,6 +952,7 @@ export const Constants = {
         "entregado",
         "cancelado",
       ],
+      estado_perfil: ["pendiente", "activo", "bloqueado"],
       estado_publicacion: ["borrador", "publicada", "pausada", "vendida"],
       estado_recordatorio: ["pendiente", "enviado", "pausado", "cancelado"],
       momento_foto: ["antes", "despues"],

@@ -2,8 +2,6 @@ import Image from "next/image";
 import { redirect } from "next/navigation";
 import { Contenido } from "@/components/layout/Marco";
 import { destinoPorRol, destinoSeguro, obtenerSesion } from "@/lib/auth";
-import { Nota } from "@/components/ui/Etiquetas";
-import { BotonSalir } from "@/components/layout/BotonSalir";
 import { FormularioIngreso } from "./FormularioIngreso";
 
 export const dynamic = "force-dynamic";
@@ -13,24 +11,10 @@ export const metadata = { title: "Ingreso" };
 export default async function Ingreso({ searchParams }: PageProps<"/ingreso">) {
   const sesion = await obtenerSesion();
   const sp = await searchParams;
+  const error = Array.isArray(sp.error) ? sp.error[0] : sp.error;
   const volver = destinoSeguro(Array.isArray(sp.volver) ? sp.volver[0] : sp.volver);
 
-  if (sesion && sesion.perfil) redirect(volver ?? destinoPorRol(sesion.perfil.rol));
-  if (sesion && !sesion.perfil) {
-    return (
-      <Contenido>
-        <div className="h-[30px]" />
-        <h1 className="h1">Cuenta sin perfil</h1>
-        <Nota>
-          Tu usuario existe pero todavía no está vinculado a un perfil del taller. Avisale al taller para que
-          lo vincule.
-        </Nota>
-        <div className="self-start">
-          <BotonSalir />
-        </div>
-      </Contenido>
-    );
-  }
+  if (sesion) redirect(volver ?? destinoPorRol(sesion.perfil));
 
   return (
     <Contenido>
@@ -45,7 +29,15 @@ export default async function Ingreso({ searchParams }: PageProps<"/ingreso">) {
       />
       <h1 className="h1 text-center">Mi cuenta</h1>
       <p className="lead text-center">Tus instrumentos, sus trabajos y cuándo toca la próxima revisión.</p>
-      <FormularioIngreso volver={volver} />
+      {error === "link" ? (
+        <div
+          role="alert"
+          className="rounded-sm border border-red-line border-l-[5px] border-l-red bg-red-bg px-[14px] py-3 text-sm"
+        >
+          Ese link ya no sirve. Pedí uno nuevo.
+        </div>
+      ) : null}
+      <FormularioIngreso volver={volver} googleHabilitado={process.env.NEXT_PUBLIC_GOOGLE_AUTH === "1"} />
       <div className="mute text-center">
         ¿Primera vez? La cuenta se crea cuando dejás un instrumento en el taller.
       </div>

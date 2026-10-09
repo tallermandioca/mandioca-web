@@ -32,6 +32,8 @@ drop table if exists perfiles cascade;
 drop table if exists _migraciones cascade;
 
 drop function if exists fn_auth_user_creado();
+drop function if exists fn_ordenes_revision_editada();
+drop function if exists fn_hoy();
 drop function if exists fn_perfiles_before_update();
 drop function if exists fn_publicaciones_tipo();
 drop function if exists fn_publicaciones_sync_en_venta();
@@ -54,3 +56,4 @@ drop type if exists momento_foto;
 drop type if exists estado_orden;
 drop type if exists tipo_instrumento;
 drop type if exists rol_perfil;
+drop type if exists estado_perfil;

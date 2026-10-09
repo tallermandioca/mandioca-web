@@ -33,9 +33,9 @@ export async function GET(request: NextRequest) {
   } = await supabase.auth.getUser();
   const { data: perfil } = await supabase
     .from("perfiles")
-    .select("rol")
+    .select("rol, estado")
     .eq("user_id", user?.id ?? "")
     .maybeSingle();
 
-  return NextResponse.redirect(`${origin}${volver ?? destinoPorRol(perfil?.rol)}`);
+  return NextResponse.redirect(`${origin}${volver ?? destinoPorRol(perfil)}`);
 }

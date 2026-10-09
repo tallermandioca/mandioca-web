@@ -8,7 +8,7 @@ export default async function LayoutPublico({ children }: LayoutProps<"/">) {
   const sesion = await obtenerSesion();
   const derecha = sesion ? (
     <Link
-      href={destinoPorRol(sesion.perfil?.rol)}
+      href={destinoPorRol(sesion.perfil)}
       className="rounded-sm border border-[#4A443D] px-[10px] py-2 text-[13px] font-semibold text-[#C9C0B2] no-underline"
     >
       {sesion.perfil?.rol === "admin" ? "Taller" : "Mi cuenta"}
