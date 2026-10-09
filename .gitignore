@@ -40,3 +40,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Archivos personales con claves (nunca al repo)
+CLAVES.txt
+*.claves.txt

@@ -60,7 +60,16 @@ Para el "link por email" hace falta que Supabase pueda mandar emails. En el plan
 
 ## Configuración de Auth en Supabase
 
-En Authentication → Sign In / Providers → Email: **desactivar "Allow new users to sign up"**. Las cuentas las crea el taller; un registro libre permitiría crear perfiles sueltos. Dejar "Confirm email" activado: el perfil se vincula recién cuando el email está confirmado.
+Los clientes se registran solos (Google o link por email) y el taller los aprueba desde `/taller/cuentas`. En Supabase:
+
+1. **Authentication → URL Configuration**: Site URL = la URL del sitio (`http://localhost:3000` en local). Agregar a Redirect URLs: `http://localhost:3000/auth/callback` y `https://<dominio>/auth/callback`.
+2. **Authentication → Sign In / Providers → Email**: dejar activado "Allow new users to sign up" y "Confirm email".
+3. **Google** (opcional, recomendado):
+   1. Entrar a https://console.cloud.google.com con la cuenta del proyecto y crear un proyecto (ej. "Taller Mandioca").
+   2. APIs y servicios → Pantalla de consentimiento OAuth → tipo **Externo**, nombre "Taller Mandioca", email de soporte, guardar. En "Público" dejar en producción (no hace falta verificación para solo login).
+   3. APIs y servicios → Credenciales → Crear credenciales → **ID de cliente OAuth** → tipo "Aplicación web". En "URI de redireccionamiento autorizados" pegar la URL que muestra Supabase en Authentication → Providers → Google (tiene la forma `https://<ref>.supabase.co/auth/v1/callback`).
+   4. Copiar el **Client ID** y el **Client secret** en Supabase → Authentication → Providers → Google, activar y guardar.
+   5. En `.env.local` (y en Vercel) poner `NEXT_PUBLIC_GOOGLE_AUTH=1`. Sin esto el botón no se muestra.
 
 ## Scripts
 
@@ -75,7 +84,7 @@ En Authentication → Sign In / Providers → Email: **desactivar "Allow new use
 | `npm run db:seed` | Ejecuta `supabase/seed.sql` (borra y recarga los datos de dominio) |
 | `npm run db:reset` | Solo desarrollo: borra todo, migra y vuelve a sembrar |
 | `npm run seed:usuarios` | Crea o vincula los usuarios de Auth de la demo |
-| `npm run db:types` | Regenera `src/lib/supabase/types.ts` desde la base (requiere `npx supabase` y la URL de conexión) |
+| `npm run db:types` | Regenera `src/lib/supabase/types.ts` desde la base (usa `npx supabase gen types` con los datos de `.env.local`) |
 
 ## Estructura
 
