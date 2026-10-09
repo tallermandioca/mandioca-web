@@ -8,6 +8,7 @@ import {
   nombreInstrumento,
   ETIQUETA_TIPO_INSTRUMENTO,
 } from "@/lib/formato";
+import { hoyArgentina } from "@/lib/hoy";
 import { crearClienteServidor } from "@/lib/supabase/server";
 
 export const runtime = "nodejs";
@@ -143,7 +144,7 @@ export async function GET(_req: NextRequest, ctx: RouteContext<"/api/pdf/instrum
           </View>
         ))}
         <View style={estilos.pie} fixed>
-          <Text>Generado el {formatearFecha(new Date())}</Text>
+          <Text>Generado el {formatearFecha(hoyArgentina())}</Text>
           <Text>
             {SITIO.url}/i/{i.qr_token}
           </Text>
@@ -153,7 +154,12 @@ export async function GET(_req: NextRequest, ctx: RouteContext<"/api/pdf/instrum
   );
 
   const buffer = await renderToBuffer(doc);
-  const archivo = `ficha-${nombre.toLowerCase().replace(/[^a-z0-9]+/g, "-")}.pdf`;
+  const archivo = `ficha-${nombre
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")}.pdf`;
   return new NextResponse(new Uint8Array(buffer), {
     headers: {
       "Content-Type": "application/pdf",

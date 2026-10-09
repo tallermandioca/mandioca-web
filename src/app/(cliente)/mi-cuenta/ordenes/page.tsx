@@ -35,7 +35,7 @@ export default async function MisOrdenes() {
             : `ingresó el ${formatearFecha(o.fecha_ingreso)}`}
         </span>
       </span>
-      <EstadoPill estado={o.estado} />
+      <EstadoPill estado={o.estado} paraCliente />
       <ChevronRight className="size-5 shrink-0 text-mute" aria-hidden />
     </Link>
   );

@@ -1,9 +1,10 @@
+import { enviarEmail } from "./email";
 import { linkWhatsapp } from "./whatsapp";
 
 /**
- * Abstract notification layer.
- * v1: WhatsApp = a wa.me link the workshop taps; email = Resend (phase 4).
- * Swap `enviarWhatsapp` for a Cloud API adapter later without touching callers.
+ * Notification layer.
+ * - whatsapp: v1 returns a wa.me link the workshop taps (no API). Swap for the Cloud API here.
+ * - email: sent right away through Resend (no-op without RESEND_API_KEY).
  */
 export type Canal = "whatsapp" | "email";
 
@@ -17,7 +18,8 @@ export interface Aviso {
 export type ResultadoAviso =
   { tipo: "link"; url: string } | { tipo: "enviado" } | { tipo: "sin_destino"; motivo: string };
 
-export function prepararAviso(aviso: Aviso): ResultadoAviso {
+/** WhatsApp: builds the link. Email: sends it. */
+export async function enviarAviso(aviso: Aviso): Promise<ResultadoAviso> {
   if (aviso.canal === "whatsapp") {
     const url = linkWhatsapp(aviso.destinatario.whatsapp, aviso.texto);
     return url
@@ -27,6 +29,10 @@ export function prepararAviso(aviso: Aviso): ResultadoAviso {
   if (!aviso.destinatario.email) {
     return { tipo: "sin_destino", motivo: "El cliente no tiene email cargado" };
   }
-  // Email sending lands in phase 4 (Resend). Until then the caller shows the text.
-  return { tipo: "sin_destino", motivo: "El envío por email se habilita en la fase 4" };
+  const resultado = await enviarEmail({
+    para: aviso.destinatario.email,
+    asunto: aviso.asunto,
+    texto: aviso.texto,
+  });
+  return resultado.enviado ? { tipo: "enviado" } : { tipo: "sin_destino", motivo: resultado.motivo };
 }

@@ -14,7 +14,10 @@ export interface Resultado {
 export async function guardarMisDatos(_e: Resultado, formData: FormData): Promise<Resultado> {
   const sesion = await requerirRol("cliente", "/mi-cuenta/datos");
   const nombre = String(formData.get("nombre") ?? "").trim();
-  const whatsapp = normalizarWhatsapp(String(formData.get("whatsapp") ?? ""));
+  const whatsappTexto = String(formData.get("whatsapp") ?? "").trim();
+  const whatsapp = normalizarWhatsapp(whatsappTexto);
+  if (whatsappTexto && !whatsapp)
+    return { error: "El WhatsApp no parece válido. Probá con el código de área, ej. 299 123 4567." };
   const canal = formData.get("canal_preferido") === "email" ? "email" : "whatsapp";
   if (!nombre) return { error: "Falta tu nombre." };
   if (!whatsapp && !sesion.perfil.email) return { error: "Cargá un WhatsApp." };

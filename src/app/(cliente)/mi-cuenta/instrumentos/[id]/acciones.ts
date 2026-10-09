@@ -16,6 +16,8 @@ export async function actualizarMiInstrumento(_e: Resultado, formData: FormData)
   const id = String(formData.get("id") ?? "");
   if (!id) return { error: "Falta el instrumento." };
   const supabase = await crearClienteServidor();
+  const { data: propio } = await supabase.from("instrumentos").select("id").eq("id", id).maybeSingle();
+  if (!propio) return { error: "No encontramos ese instrumento." };
 
   const cambios: { calibre_cuerdas?: string | null; foto_url?: string } = {};
   if (formData.has("calibre_cuerdas")) {

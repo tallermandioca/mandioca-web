@@ -11,19 +11,18 @@ import { requerirRol } from "@/lib/auth";
 import { configuracion, ordenCompleta } from "@/lib/datos/taller";
 import { ETIQUETA_ESTADO, siguientesEstados } from "@/lib/domain/ordenes";
 import { formatearFecha, formatearImporte, nombreInstrumento } from "@/lib/formato";
-import { linkWhatsapp, rellenarPlantilla } from "@/lib/notificaciones/whatsapp";
+import {
+  PLANTILLA_LISTO,
+  PLANTILLA_PRESUPUESTO,
+  PLANTILLA_RECIBIDO,
+  textoAviso,
+} from "@/lib/notificaciones/avisos";
+import { linkWhatsapp } from "@/lib/notificaciones/whatsapp";
 import { resolverFotos } from "@/lib/storage";
 import { borrarFoto } from "./acciones";
 import { FormularioDetalles, FormularioEstado, FormularioFotos } from "./FormulariosOrden";
 
 export const dynamic = "force-dynamic";
-
-const PLANTILLA_LISTO =
-  "Hola {nombre}! Tu {instrumento} está listo para retirar. Orden #{numero}. Te esperamos en el taller.";
-const PLANTILLA_RECIBIDO =
-  "Hola {nombre}! Recibimos tu {instrumento} en el Taller Mandioca. Orden #{numero}. Podés seguirla desde tu cuenta: {link}";
-const PLANTILLA_PRESUPUESTO =
-  "Hola {nombre}! Ya tenemos el presupuesto de tu {instrumento} (orden #{numero}): {importe}. Podés aprobarlo desde tu cuenta: {link}";
 
 function primero(v: string | string[] | undefined): string | undefined {
   return Array.isArray(v) ? v[0] : v;
@@ -38,10 +37,9 @@ export default async function DetalleOrden({ params, searchParams }: PageProps<"
 
   const instrumento = orden.instrumentos ? nombreInstrumento(orden.instrumentos) : "instrumento";
   const cliente = orden.perfiles;
-  const nombrePila = cliente?.nombre.split(" ")[0] ?? "";
   const numero = numeroOrden(orden.numero);
   const valores = {
-    nombre: nombrePila,
+    nombre: cliente?.nombre ?? "",
     instrumento,
     numero: String(orden.numero).padStart(4, "0"),
     link: `${SITIO.url}/mi-cuenta`,
@@ -49,10 +47,10 @@ export default async function DetalleOrden({ params, searchParams }: PageProps<"
   };
   const mensaje =
     orden.estado === "listo"
-      ? rellenarPlantilla(config?.texto_aviso_listo?.trim() || PLANTILLA_LISTO, valores)
+      ? textoAviso(config?.texto_aviso_listo, PLANTILLA_LISTO, valores)
       : orden.estado === "presupuestado"
-        ? rellenarPlantilla(PLANTILLA_PRESUPUESTO, valores)
-        : rellenarPlantilla(PLANTILLA_RECIBIDO, valores);
+        ? textoAviso(null, PLANTILLA_PRESUPUESTO, valores)
+        : textoAviso(null, PLANTILLA_RECIBIDO, valores);
   const wa = linkWhatsapp(cliente?.whatsapp, mensaje);
 
   const fotos = [...orden.fotos_orden].sort((a, b) => a.orden - b.orden);

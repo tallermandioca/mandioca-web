@@ -4,7 +4,8 @@ import { requerirRol } from "@/lib/auth";
 import { configuracion, todosLosAvisos } from "@/lib/datos/taller";
 import { formatearFecha, nombreInstrumento } from "@/lib/formato";
 import { hoyArgentina } from "@/lib/hoy";
-import { linkWhatsapp, rellenarPlantilla } from "@/lib/notificaciones/whatsapp";
+import { PLANTILLA_CALIBRACION, textoAviso } from "@/lib/notificaciones/avisos";
+import { linkWhatsapp } from "@/lib/notificaciones/whatsapp";
 import { fechaDesdeIso } from "@/lib/formato";
 import { cancelarAviso, marcarEnviado, pausarAviso, reanudarAviso } from "./acciones";
 
@@ -12,14 +13,10 @@ export const dynamic = "force-dynamic";
 
 export const metadata = { title: "Avisos" };
 
-const PLANTILLA_POR_DEFECTO =
-  "Hola {nombre}! Te escribimos del Taller Mandioca. A tu {instrumento} le toca la revisión (vence el {fecha}). ¿Coordinamos un turno?";
-
 export default async function Avisos() {
   await requerirRol("admin", "/taller/avisos");
   const [avisos, config] = await Promise.all([todosLosAvisos(), configuracion()]);
   const hoy = hoyArgentina();
-  const plantilla = config?.texto_aviso_calibracion?.trim() || PLANTILLA_POR_DEFECTO;
 
   return (
     <Contenido>
@@ -34,8 +31,8 @@ export default async function Avisos() {
         const fecha = fechaDesdeIso(a.fecha_programada);
         const vencido = fecha ? fecha.getTime() <= hoy.getTime() : false;
         const instrumento = a.instrumentos ? nombreInstrumento(a.instrumentos) : "instrumento";
-        const texto = rellenarPlantilla(plantilla, {
-          nombre: a.perfiles?.nombre.split(" ")[0] ?? "",
+        const texto = textoAviso(config?.texto_aviso_calibracion, PLANTILLA_CALIBRACION, {
+          nombre: a.perfiles?.nombre ?? "",
           instrumento,
           fecha: formatearFecha(a.fecha_programada),
         });

@@ -71,6 +71,13 @@ Los clientes se registran solos (Google o link por email) y el taller los aprueb
    4. Copiar el **Client ID** y el **Client secret** en Supabase → Authentication → Providers → Google, activar y guardar.
    5. En `.env.local` (y en Vercel) poner `NEXT_PUBLIC_GOOGLE_AUTH=1`. Sin esto el botón no se muestra.
 
+## Email y recordatorios (Resend + cron)
+
+- `RESEND_API_KEY`: clave de https://resend.com (plan gratuito). Sin ella los emails no se envían y quedan en el log.
+- `EMAIL_FROM`: remitente. Con un dominio verificado en Resend, por ejemplo `Taller Mandioca <avisos@tudominio.com.ar>`; hasta entonces `onboarding@resend.dev`.
+- `CRON_SECRET`: texto largo al azar. Vercel ejecuta `/api/cron/recordatorios` todos los días a las 9:00 (hora argentina) según `vercel.json` y manda ese secreto. Para probar a mano: `curl -H "Authorization: Bearer <CRON_SECRET>" https://<dominio>/api/cron/recordatorios`.
+- Recomendado: en Supabase → Authentication → SMTP Settings usar Resend como SMTP para los links de ingreso.
+
 ## Scripts
 
 | Comando | Qué hace |

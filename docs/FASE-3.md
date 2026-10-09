@@ -30,3 +30,9 @@ Fecha: 2026-10-09
 - Fase 4: cron de recordatorios, email con Resend, SMTP de Auth.
 - Fase 5: publicar y moderar en el muestrario, sello.
 - Fase 6: Instagram, PWA, pulido, Lighthouse, página de privacidad (necesaria para publicar la app de Google), documento de traspaso.
+
+## Revisión de código (cierre de fase)
+
+Sin huecos de permisos. Corregido: el cliente ya no ve la etiqueta "Presupuestar" del taller (ve "Recibido"); al aprobar se envía el importe que vio y la aprobación falla si el taller lo cambió mientras tanto; la barra de estados distingue "Presupuesto aprobado" y "Entregada"; el admin que entra a /mi-cuenta va a /taller; fechas de aprobación y del PDF en hora argentina; "Revisión hoy" en vez de "en 0 días"; un WhatsApp mal escrito en Mis datos avisa en vez de borrarse; la foto del instrumento se sube solo después de verificar que es del cliente; nombre del PDF sin acentos rotos.
+
+Menores que quedan: una foto reemplazada no se borra del bucket; el trigger permite que un cliente ponga cualquier URL en `foto_url` por la API directa (se mostraría rota, no es un riesgo de datos).

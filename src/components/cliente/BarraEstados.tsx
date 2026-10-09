@@ -27,6 +27,7 @@ function indice(estado: EstadoOrden): number {
 /** Four-step progress bar for an order, as in the prototype's dark band. */
 export function BarraEstados({ estado, oscuro = false }: { estado: EstadoOrden; oscuro?: boolean }) {
   const actual = indice(estado);
+  const terminada = estado === "entregado";
   if (estado === "cancelado") {
     return <div className={oscuro ? "text-[13px] text-[#C9C0B2]" : "mute"}>Orden cancelada</div>;
   }
@@ -37,20 +38,26 @@ export function BarraEstados({ estado, oscuro = false }: { estado: EstadoOrden; 
         {PASOS.map((p, i) => (
           <div
             key={p.estado}
-            className={`h-[5px] flex-1 rounded-[3px] ${i < actual ? "bg-ok" : i === actual ? "bg-red" : pendiente}`}
+            className={`h-[5px] flex-1 rounded-[3px] ${i < actual || terminada ? "bg-ok" : i === actual ? "bg-red" : pendiente}`}
           />
         ))}
       </div>
       <div className={oscuro ? "text-[13px] text-[#C9C0B2]" : "mute"}>
+        {terminada ? <b className={oscuro ? "text-white" : "text-ink"}>Entregada · </b> : null}
         {PASOS.map((p, i) => (
           <span key={p.estado}>
             {i > 0 ? " → " : ""}
-            {i === actual ? (
-              <b className={oscuro ? "text-white" : "text-ink"}>{p.etiqueta}</b>
+            {i === actual && !terminada ? (
+              <b className={oscuro ? "text-white" : "text-ink"}>
+                {estado === "aprobado" ? "Presupuesto aprobado" : p.etiqueta}
+              </b>
             ) : (
               <>
                 {p.etiqueta}
-                {p.estado === "presupuestado" && estado !== "recibido" && estado !== "presupuestado"
+                {p.estado === "presupuestado" &&
+                estado !== "recibido" &&
+                estado !== "presupuestado" &&
+                estado !== "aprobado"
                   ? " (aprobado)"
                   : ""}
               </>

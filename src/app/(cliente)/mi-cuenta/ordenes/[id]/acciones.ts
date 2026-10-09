@@ -13,15 +13,18 @@ export interface Resultado {
 export async function aprobarPresupuesto(_e: Resultado, formData: FormData): Promise<Resultado> {
   await requerirRol("cliente", "/mi-cuenta/ordenes");
   const id = String(formData.get("id") ?? "");
-  if (!id) return { error: "Falta la orden." };
+  const presupuesto = Number(formData.get("presupuesto"));
+  if (!id || !Number.isFinite(presupuesto)) return { error: "Falta la orden." };
   const supabase = await crearClienteServidor();
   const { error, count } = await supabase
     .from("ordenes")
     .update({ estado: "aprobado" }, { count: "exact" })
     .eq("id", id)
-    .eq("estado", "presupuestado");
+    .eq("estado", "presupuestado")
+    .eq("presupuesto", presupuesto);
   if (error) return { error: "No se pudo aprobar: " + error.message };
-  if (!count) return { error: "Esta orden ya no está esperando aprobación." };
+  if (!count)
+    return { error: "El presupuesto cambió o la orden ya no está esperando aprobación. Recargá la página." };
   revalidatePath(`/mi-cuenta/ordenes/${id}`);
   revalidatePath("/mi-cuenta");
   revalidatePath("/taller");

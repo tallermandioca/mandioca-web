@@ -7,6 +7,7 @@ import { ESTADOS_ORDEN, transicionValida, type EstadoOrden } from "@/lib/domain/
 import { aIsoFecha, parsearImporte } from "@/lib/formato";
 import { hoyArgentina } from "@/lib/hoy";
 import { publicarFoto, subirFotoOrden } from "@/lib/storage";
+import { notificarOrdenPorEmail } from "@/lib/notificaciones/ordenes";
 import { crearClienteServidor } from "@/lib/supabase/server";
 import type { Database } from "@/lib/supabase/types";
 
@@ -72,6 +73,16 @@ export async function cambiarEstado(_e: Resultado, formData: FormData): Promise<
 
   const { error } = await supabase.from("ordenes").update({ estado: hacia }).eq("id", id);
   if (error) return { error: "No se pudo cambiar: " + error.message };
+  if (hacia === "presupuestado") {
+    const { data: completa } = await supabase
+      .from("ordenes")
+      .select(
+        "numero, presupuesto, avisar_cliente, instrumentos(tipo, marca, modelo), perfiles!ordenes_cliente_id_fkey(nombre, email, whatsapp, canal_preferido)",
+      )
+      .eq("id", id)
+      .maybeSingle();
+    if (completa) await notificarOrdenPorEmail(completa, "presupuesto");
+  }
   refrescar(id);
   return { mensaje: "Estado actualizado." };
 }
@@ -249,6 +260,20 @@ export async function cerrarTrabajo(_e: Resultado, formData: FormData): Promise<
 
   if (cuerdas) {
     await supabase.from("instrumentos").update({ calibre_cuerdas: cuerdas }).eq("id", orden.instrumento_id);
+  }
+
+  if (avisar) {
+    const [{ data: completa }, { data: config }] = await Promise.all([
+      supabase
+        .from("ordenes")
+        .select(
+          "numero, presupuesto, avisar_cliente, instrumentos(tipo, marca, modelo), perfiles!ordenes_cliente_id_fkey(nombre, email, whatsapp, canal_preferido)",
+        )
+        .eq("id", id)
+        .maybeSingle(),
+      supabase.from("configuracion").select("texto_aviso_listo").maybeSingle(),
+    ]);
+    if (completa) await notificarOrdenPorEmail(completa, "listo", config?.texto_aviso_listo);
   }
 
   let avisoPortfolio = "";

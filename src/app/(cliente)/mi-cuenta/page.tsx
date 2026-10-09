@@ -79,7 +79,9 @@ export default async function MiCuenta() {
             estado === "vencida"
               ? `Calibración vencida · ${formatearFecha(i.proxima_revision)}`
               : estado === "proxima"
-                ? `Revisión en ${dias} día${dias === 1 ? "" : "s"}`
+                ? dias === 0
+                  ? "Revisión hoy"
+                  : `Revisión en ${dias} día${dias === 1 ? "" : "s"}`
                 : estado === "al_dia"
                   ? `Al día · próx. ${formatearMesAnio(i.proxima_revision)}`
                   : ETIQUETA_SEMAFORO.sin_fecha;

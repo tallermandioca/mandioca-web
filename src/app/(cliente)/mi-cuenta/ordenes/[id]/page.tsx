@@ -8,7 +8,7 @@ import { Foto } from "@/components/ui/Foto";
 import { Nota } from "@/components/ui/Etiquetas";
 import { requerirRol } from "@/lib/auth";
 import { miOrden } from "@/lib/datos/cliente";
-import { formatearFecha, formatearImporte, nombreInstrumento } from "@/lib/formato";
+import { formatearFecha, formatearFechaHora, formatearImporte, nombreInstrumento } from "@/lib/formato";
 import { resolverFotos } from "@/lib/storage";
 import { BotonAprobar } from "./BotonAprobar";
 
@@ -44,7 +44,7 @@ export default async function OrdenCliente({ params }: PageProps<"/mi-cuenta/ord
             {o.fecha_estimada && !o.fecha_cierre ? ` · estimado ${formatearFecha(o.fecha_estimada)}` : ""}
           </div>
         </div>
-        <EstadoPill estado={o.estado} />
+        <EstadoPill estado={o.estado} paraCliente />
       </div>
 
       <div className="card p-3">
@@ -56,7 +56,11 @@ export default async function OrdenCliente({ params }: PageProps<"/mi-cuenta/ord
           <div className="card flex flex-col gap-2 p-3">
             <div className="mute">Presupuesto</div>
             <div className="font-display text-[30px] font-bold">{formatearImporte(o.presupuesto)}</div>
-            <BotonAprobar ordenId={o.id} importe={formatearImporte(o.presupuesto)} />
+            <BotonAprobar
+              ordenId={o.id}
+              presupuesto={o.presupuesto}
+              importe={formatearImporte(o.presupuesto)}
+            />
           </div>
         ) : (
           <Nota>El taller está preparando el presupuesto.</Nota>
@@ -66,7 +70,7 @@ export default async function OrdenCliente({ params }: PageProps<"/mi-cuenta/ord
         <div className="card p-3">
           <div className="mute">
             Presupuesto aprobado
-            {o.presupuesto_aprobado_at ? ` el ${formatearFecha(o.presupuesto_aprobado_at.slice(0, 10))}` : ""}
+            {o.presupuesto_aprobado_at ? ` el ${formatearFechaHora(o.presupuesto_aprobado_at)}` : ""}
           </div>
           <div className="font-display text-xl font-bold">{formatearImporte(o.presupuesto)}</div>
         </div>

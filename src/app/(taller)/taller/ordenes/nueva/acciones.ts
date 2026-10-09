@@ -6,6 +6,7 @@ import { aIsoFecha } from "@/lib/formato";
 import { leerDatosCliente, leerDatosInstrumento } from "@/lib/formularios";
 import { hoyArgentina } from "@/lib/hoy";
 import { subirFotoInstrumento, subirFotoOrden } from "@/lib/storage";
+import { notificarOrdenPorEmail } from "@/lib/notificaciones/ordenes";
 import { crearClienteServidor } from "@/lib/supabase/server";
 
 export interface ResultadoNuevaOrden {
@@ -138,6 +139,17 @@ export async function crearOrden(_e: ResultadoNuevaOrden, formData: FormData): P
     } catch (e) {
       console.error("foto antes", e instanceof Error ? e.message : e);
     }
+  }
+
+  if (avisar) {
+    const { data: completa } = await supabase
+      .from("ordenes")
+      .select(
+        "numero, presupuesto, avisar_cliente, instrumentos(tipo, marca, modelo), perfiles!ordenes_cliente_id_fkey(nombre, email, whatsapp, canal_preferido)",
+      )
+      .eq("id", orden.id)
+      .maybeSingle();
+    if (completa) await notificarOrdenPorEmail(completa, "recibido");
   }
 
   redirect(`/taller/ordenes/${orden.id}?creada=1`);

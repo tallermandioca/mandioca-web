@@ -17,8 +17,8 @@ const tonoEstado: Record<EstadoOrden, "ok" | "warn" | "info" | "mute" | "red"> =
   cancelado: "red",
 };
 
-export function EstadoPill({ estado }: { estado: EstadoOrden }) {
-  const texto = estado === "recibido" ? "Presupuestar" : ETIQUETA_ESTADO[estado];
+export function EstadoPill({ estado, paraCliente = false }: { estado: EstadoOrden; paraCliente?: boolean }) {
+  const texto = estado === "recibido" && !paraCliente ? "Presupuestar" : ETIQUETA_ESTADO[estado];
   return <Pill tono={tonoEstado[estado]}>{texto}</Pill>;
 }
 

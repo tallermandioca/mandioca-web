@@ -30,6 +30,19 @@ export function formatearMesAnio(iso: string | Date | null | undefined): string 
   return `${String(fecha.getMonth() + 1).padStart(2, "0")}/${fecha.getFullYear()}`;
 }
 
+/** Timestamp (ISO) as an Argentine calendar date, regardless of server timezone. */
+export function formatearFechaHora(iso: string | null | undefined): string {
+  if (!iso) return "—";
+  const fecha = new Date(iso);
+  if (Number.isNaN(fecha.getTime())) return "—";
+  return new Intl.DateTimeFormat("es-AR", {
+    timeZone: "America/Argentina/Buenos_Aires",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(fecha);
+}
+
 export function formatearFechaLarga(fecha: Date): string {
   return fechaLarga.format(fecha);
 }
