@@ -154,6 +154,7 @@ export default async function DetalleOrden({ params, searchParams }: PageProps<"
                 url={urls.get(f.url) ?? null}
                 alt={`Foto ${f.momento}`}
                 className="aspect-square"
+                ampliable
                 sizes="150px"
               />
               <div className="flex items-center justify-between">

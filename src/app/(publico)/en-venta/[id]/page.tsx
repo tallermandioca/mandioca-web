@@ -65,6 +65,7 @@ export default async function DetallePublicacion({ params }: PageProps<"/en-vent
         alt={publicacion.titulo}
         marcador={`[FOTO · ${publicacion.titulo}]`}
         className="h-[240px]"
+        ampliable
         prioridad
       />
       {fotos.length > 1 ? (
@@ -75,6 +76,7 @@ export default async function DetallePublicacion({ params }: PageProps<"/en-vent
               url={f.url}
               alt={`${publicacion.titulo}, foto ${i + 2}`}
               className="aspect-square text-[10px]"
+              ampliable
               sizes="120px"
             />
           ))}

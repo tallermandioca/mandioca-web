@@ -7,6 +7,8 @@ const nextConfig: NextConfig = {
   // Photos are compressed client-side (~300 KB each); this covers a form with several of them.
   experimental: { serverActions: { bodySizeLimit: "8mb" } },
   images: {
+    // 90 is used by the full-screen photo viewer (FotoAmpliable).
+    qualities: [75, 90],
     remotePatterns: [
       { protocol: "https", hostname: "*.supabase.co" },
       { protocol: "https", hostname: "*.cdninstagram.com" },

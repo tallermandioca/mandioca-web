@@ -106,6 +106,7 @@ export default async function OrdenCliente({ params }: PageProps<"/mi-cuenta/ord
                 url={urls.get(f.url) ?? null}
                 alt={f.momento === "antes" ? "Antes" : "Después"}
                 className="aspect-square"
+                ampliable
                 sizes="150px"
               />
               <span className="mute">{f.momento === "antes" ? "Antes" : "Después"}</span>

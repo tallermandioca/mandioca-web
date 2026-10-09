@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { FotoAmpliable } from "./FotoAmpliable";
 
 interface Props {
   url: string | null | undefined;
@@ -9,6 +10,10 @@ interface Props {
   className?: string;
   sizes?: string;
   prioridad?: boolean;
+  /** Tap opens the photo full screen. */
+  ampliable?: boolean;
+  /** Show the whole photo (letterboxed) instead of cropping it to fill the box. */
+  contener?: boolean;
 }
 
 export const PREFIJO_MARCADOR = "placeholder:";
@@ -30,6 +35,8 @@ export function Foto({
   className = "",
   sizes = "(max-width: 520px) 100vw, 480px",
   prioridad,
+  ampliable,
+  contener,
 }: Props) {
   if (esMarcador(url)) {
     const texto = url ? url.slice(PREFIJO_MARCADOR.length) : (marcador ?? "[FOTO]");
@@ -43,9 +50,28 @@ export function Foto({
       </div>
     );
   }
+  if (ampliable) {
+    return (
+      <FotoAmpliable
+        url={url as string}
+        alt={alt}
+        className={className}
+        sizes={sizes}
+        prioridad={prioridad}
+        contener={contener}
+      />
+    );
+  }
   return (
     <div className={`relative overflow-hidden rounded-sm bg-photo ${className}`}>
-      <Image src={url as string} alt={alt} fill sizes={sizes} className="object-cover" priority={prioridad} />
+      <Image
+        src={url as string}
+        alt={alt}
+        fill
+        sizes={sizes}
+        className={contener ? "object-contain" : "object-cover"}
+        priority={prioridad}
+      />
     </div>
   );
 }

@@ -56,6 +56,7 @@ export default async function FichaInstrumento({ params }: PageProps<"/mi-cuenta
         alt={nombreInstrumento(i)}
         marcador={`[FOTO · ${nombreInstrumento(i)}]`}
         className="h-[180px]"
+        ampliable
         prioridad
       />
       <PuntoSemaforo estado={estado}>{ETIQUETA_SEMAFORO[estado]}</PuntoSemaforo>
@@ -93,6 +94,7 @@ export default async function FichaInstrumento({ params }: PageProps<"/mi-cuenta
                     url={urls.get(f.url) ?? null}
                     alt={f.momento === "antes" ? "Antes" : "Después"}
                     className="aspect-square text-[10px]"
+                    ampliable
                     sizes="110px"
                   />
                 ))}

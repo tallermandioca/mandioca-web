@@ -55,7 +55,13 @@ export default async function EditarInstrumento({ params }: PageProps<"/taller/i
       {i.foto_serie_url ? (
         <div>
           <div className="mute mb-1">Número de serie</div>
-          <Foto url={fotos.get(i.foto_serie_url) ?? null} alt="Foto del número de serie" className="h-40" />
+          <Foto
+            url={fotos.get(i.foto_serie_url) ?? null}
+            alt="Foto del número de serie"
+            className="aspect-[4/3] w-full"
+            contener
+            ampliable
+          />
         </div>
       ) : null}
       <FormularioInstrumento
