@@ -14,7 +14,8 @@
     "db:seed": "tsx scripts/db.ts seed",
     "db:reset": "tsx scripts/db.ts reset",
     "seed:usuarios": "tsx scripts/seed-usuarios.ts",
-    "db:types": "tsx scripts/gen-types.ts"
+    "db:types": "tsx scripts/gen-types.ts",
+    "db:limpiar": "tsx scripts/db.ts limpiar"
   },
   "dependencies": {
     "@react-pdf/renderer": "^4.9.0",

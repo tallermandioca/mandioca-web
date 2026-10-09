@@ -96,6 +96,7 @@ Los clientes se registran solos (Google o link por email) y el taller los aprueb
 | `npm run db:migrate` | Aplica las migraciones pendientes de `supabase/migrations` (lleva registro en la tabla `_migraciones`) |
 | `npm run db:seed` | Ejecuta `supabase/seed.sql` (borra y recarga los datos de dominio) |
 | `npm run db:reset` | Solo desarrollo: borra todo, migra y vuelve a sembrar |
+| `npm run db:limpiar` | Borra todos los datos de demo y deja la base lista para clientes reales (conserva admin, tipos de trabajo y configuración) |
 | `npm run seed:usuarios` | Crea o vincula los usuarios de Auth de la demo |
 | `npm run db:types` | Regenera `src/lib/supabase/types.ts` desde la base (usa `npx supabase gen types` con los datos de `.env.local`) |
 

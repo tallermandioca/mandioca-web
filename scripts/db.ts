@@ -4,6 +4,7 @@
  *   npm run db:migrate   apply pending files from supabase/migrations in order
  *   npm run db:seed      run supabase/seed.sql (demo data)
  *   npm run db:reset     DEV ONLY: drop everything (supabase/reset.sql), migrate and seed
+ *   npm run db:limpiar   remove all demo data (supabase/limpiar-demo.sql); keeps admin, work types and config
  *
  * Connection settings come from .env.local (SUPABASE_DB_*).
  */
@@ -82,6 +83,9 @@ async function main(): Promise<void> {
       case "seed":
         await runFile(sql, "seed.sql");
         break;
+      case "limpiar":
+        await runFile(sql, "limpiar-demo.sql");
+        break;
       case "reset":
         if (process.env.NODE_ENV === "production") {
           throw new Error("reset no se ejecuta en producción");
@@ -91,7 +95,7 @@ async function main(): Promise<void> {
         await runFile(sql, "seed.sql");
         break;
       default:
-        throw new Error("Uso: tsx scripts/db.ts <migrate|seed|reset>");
+        throw new Error("Uso: tsx scripts/db.ts <migrate|seed|reset|limpiar>");
     }
   } finally {
     await sql.end();

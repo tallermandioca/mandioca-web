@@ -68,7 +68,7 @@ Ya configurado (ver README, sección Auth). Para que entre cualquier usuario y n
 
 ## 7. Datos del taller
 
-Todo lo editable está en el sitio, como taller: Configuración (datos, textos de avisos, moderación), Tipos de trabajo (plantillas), Etiquetas QR, Cuentas nuevas. Los usuarios de demo (`*@demo.mandioca.ar`) se pueden borrar desde Supabase → Authentication → Users y Table Editor → perfiles antes de salir a producción; o correr `npm run db:seed` sobre una base limpia solo en desarrollo.
+Todo lo editable está en el sitio, como taller: Configuración (datos, textos de avisos, moderación), Tipos de trabajo (plantillas), Etiquetas QR, Cuentas nuevas. Para borrar los datos de demo antes de salir a producción: `npm run db:limpiar` (conserva el admin, los tipos de trabajo y la configuración). `npm run db:seed` vuelve a cargarlos, solo en desarrollo.
 
 ## 8. Dónde está cada cosa en el código
 
