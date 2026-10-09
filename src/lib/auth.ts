@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { crearClienteServidor } from "@/lib/supabase/server";
 import type { Database } from "@/lib/supabase/types";
 
+export { destinoSeguro } from "./redirect";
+
 export type Rol = Database["public"]["Enums"]["rol_perfil"];
 
 export interface Sesion {

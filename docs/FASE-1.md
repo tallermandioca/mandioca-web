@@ -59,3 +59,22 @@ Verificado además contra la base: un cliente ve solo sus instrumentos y órdene
 - Fase 6: Instagram OAuth y caché, PWA, pulido, Lighthouse, documento de traspaso de cuentas.
 - Datos reales a completar por el taller en `configuracion`: WhatsApp, dirección, horarios, email, dominio.
 - Supabase gratuito pausa el proyecto tras 7 días sin uso: se reactiva desde el panel.
+
+## Revisión de código (cierre de fase)
+
+Se hizo una revisión independiente del commit de la fase. Corregido en la migración `0007_revision_fase_1.sql` y en el código:
+
+- **Crítico**: el muestrario salía vacío para visitantes anónimos (la consulta embebía `instrumentos`, que no es público). Ahora `publicaciones_venta.instrumento_tipo` se copia por trigger y el filtro no toca `instrumentos`.
+- Redirect abierto vía `?volver=`: nuevo `destinoSeguro()` (`src/lib/redirect.ts`, con tests) usado en ingreso y callback.
+- Las notas internas pasan a la tabla `notas_internas_orden`, solo admin.
+- Un cliente no puede publicar directo (salvo `moderacion_automatica`), ni volver a `publicada` una publicación pausada, ni tocar `created_at`.
+- Al aprobar un presupuesto, el trigger reconstruye la fila desde `OLD`: nada más que `estado` y `presupuesto_aprobado_at` cambia (antes podía cambiar `numero`).
+- El perfil se vincula o crea solo cuando el usuario de Auth tiene el email confirmado. **Pendiente en el panel de Supabase: desactivar "Allow new users to sign up"** (ver README).
+- Un cliente no puede cambiar su propio email, rol ni `user_id`.
+- `_migraciones` queda con RLS (no accesible por la API).
+- La contraseña del admin ya no es la de la demo: la define `SEED_ADMIN_PASSWORD` o se genera al azar.
+- `/auth/callback` acepta también `token_hash` + `type` (invitaciones y links abiertos en otro dispositivo).
+- Si hay sesión sin perfil, `/ingreso` muestra un aviso en vez de entrar en un bucle de redirecciones.
+- `.env.example` ahora sí se versiona.
+
+Observaciones menores que quedan para fases siguientes: los datos de demo no respetan al 100% la regla de próxima revisión (siguen al prototipo); editar `proxima_revision` después de cerrar no propaga al instrumento ni al recordatorio (Fase 2 lo hará desde la app); el sello no valida en la base que la orden sea del mismo instrumento (Fase 5); fechas con `current_date` en UTC (ajustar zona horaria `America/Argentina/Buenos_Aires` en Fase 2); errores de consulta silenciados en `datos/publico.ts`; "abiertas" en el panel incluye las que están para retirar; el listado público del bucket expone ids de perfil en los nombres de carpeta.

@@ -1,21 +1,30 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { destinoPorRol } from "@/lib/auth";
+import type { EmailOtpType } from "@supabase/supabase-js";
+import { destinoPorRol, destinoSeguro } from "@/lib/auth";
 import { crearClienteServidor } from "@/lib/supabase/server";
 
-/** Magic link / invitation landing: exchanges the code for a session and sends the user to their area. */
+const TIPOS_OTP: EmailOtpType[] = ["magiclink", "invite", "recovery", "email_change", "signup", "email"];
+
+/**
+ * Auth landing for email links.
+ * - PKCE flow (same browser that asked for the link): ?code=...
+ * - token_hash flow (invitations, links opened on another device): ?token_hash=...&type=...
+ */
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = request.nextUrl;
   const code = searchParams.get("code");
-  const volver = searchParams.get("volver");
-  const destinoVolver = volver && volver.startsWith("/") && !volver.startsWith("//") ? volver : null;
-
-  if (!code) {
-    return NextResponse.redirect(`${origin}/ingreso?error=link`);
-  }
+  const tokenHash = searchParams.get("token_hash");
+  const tipo = searchParams.get("type") as EmailOtpType | null;
+  const volver = destinoSeguro(searchParams.get("volver"));
 
   const supabase = await crearClienteServidor();
-  const { error } = await supabase.auth.exchangeCodeForSession(code);
-  if (error) {
+  let fallo = true;
+  if (code) {
+    fallo = Boolean((await supabase.auth.exchangeCodeForSession(code)).error);
+  } else if (tokenHash && tipo && TIPOS_OTP.includes(tipo)) {
+    fallo = Boolean((await supabase.auth.verifyOtp({ token_hash: tokenHash, type: tipo })).error);
+  }
+  if (fallo) {
     return NextResponse.redirect(`${origin}/ingreso?error=link`);
   }
 
@@ -28,5 +37,5 @@ export async function GET(request: NextRequest) {
     .eq("user_id", user?.id ?? "")
     .maybeSingle();
 
-  return NextResponse.redirect(`${origin}${destinoVolver ?? destinoPorRol(perfil?.rol)}`);
+  return NextResponse.redirect(`${origin}${volver ?? destinoPorRol(perfil?.rol)}`);
 }

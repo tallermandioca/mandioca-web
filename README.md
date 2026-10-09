@@ -48,7 +48,7 @@ La especificación completa está en [docs/PROMPT-taller-mandioca.md](docs/PROMP
 
 ## Usuarios de demo
 
-Contraseña para todos: `mandioca123`.
+Los clientes de demo usan la contraseña `mandioca123`. La del admin la define `SEED_ADMIN_PASSWORD` en `.env.local` o, si no está, `seed:usuarios` genera una al azar y la muestra una sola vez.
 
 | Rol | Email | Entra a |
 |---|---|---|
@@ -57,6 +57,10 @@ Contraseña para todos: `mandioca123`.
 | Cliente | `lucia@demo.mandioca.ar`, `jorge@demo.mandioca.ar`, `sofia@demo.mandioca.ar`, `ana@demo.mandioca.ar`, `lucas@demo.mandioca.ar` | `/mi-cuenta` |
 
 Para el "link por email" hace falta que Supabase pueda mandar emails. En el plan gratuito usa su SMTP de prueba (pocos por hora); en producción se configura Resend como SMTP en Authentication → SMTP Settings.
+
+## Configuración de Auth en Supabase
+
+En Authentication → Sign In / Providers → Email: **desactivar "Allow new users to sign up"**. Las cuentas las crea el taller; un registro libre permitiría crear perfiles sueltos. Dejar "Confirm email" activado: el perfil se vincula recién cuando el email está confirmado.
 
 ## Scripts
 

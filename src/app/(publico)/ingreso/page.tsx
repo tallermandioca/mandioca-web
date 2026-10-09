@@ -1,7 +1,9 @@
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import { Contenido } from "@/components/layout/Marco";
-import { destinoPorRol, obtenerSesion } from "@/lib/auth";
+import { destinoPorRol, destinoSeguro, obtenerSesion } from "@/lib/auth";
+import { Nota } from "@/components/ui/Etiquetas";
+import { BotonSalir } from "@/components/layout/BotonSalir";
 import { FormularioIngreso } from "./FormularioIngreso";
 
 export const dynamic = "force-dynamic";
@@ -11,11 +13,24 @@ export const metadata = { title: "Ingreso" };
 export default async function Ingreso({ searchParams }: PageProps<"/ingreso">) {
   const sesion = await obtenerSesion();
   const sp = await searchParams;
-  const volverParam = Array.isArray(sp.volver) ? sp.volver[0] : sp.volver;
-  const volver =
-    volverParam && volverParam.startsWith("/") && !volverParam.startsWith("//") ? volverParam : null;
+  const volver = destinoSeguro(Array.isArray(sp.volver) ? sp.volver[0] : sp.volver);
 
-  if (sesion) redirect(volver ?? destinoPorRol(sesion.perfil?.rol));
+  if (sesion && sesion.perfil) redirect(volver ?? destinoPorRol(sesion.perfil.rol));
+  if (sesion && !sesion.perfil) {
+    return (
+      <Contenido>
+        <div className="h-[30px]" />
+        <h1 className="h1">Cuenta sin perfil</h1>
+        <Nota>
+          Tu usuario existe pero todavía no está vinculado a un perfil del taller. Avisale al taller para que
+          lo vincule.
+        </Nota>
+        <div className="self-start">
+          <BotonSalir />
+        </div>
+      </Contenido>
+    );
+  }
 
   return (
     <Contenido>

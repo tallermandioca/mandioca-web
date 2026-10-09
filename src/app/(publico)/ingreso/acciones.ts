@@ -2,17 +2,12 @@
 
 import { redirect } from "next/navigation";
 import { SITIO } from "@/config/sitio";
-import { destinoPorRol } from "@/lib/auth";
+import { destinoPorRol, destinoSeguro } from "@/lib/auth";
 import { crearClienteServidor } from "@/lib/supabase/server";
 
 export interface EstadoIngreso {
   error?: string;
   mensaje?: string;
-}
-
-function destinoSeguro(volver: FormDataEntryValue | null): string | null {
-  if (typeof volver !== "string" || !volver.startsWith("/") || volver.startsWith("//")) return null;
-  return volver;
 }
 
 export async function ingresarConContrasena(

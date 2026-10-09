@@ -298,6 +298,43 @@ export type Database = {
           },
         ];
       };
+      notas_internas_orden: {
+        Row: {
+          created_at: string;
+          orden_id: string;
+          texto: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          orden_id: string;
+          texto?: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          orden_id?: string;
+          texto?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "notas_internas_orden_orden_id_fkey";
+            columns: ["orden_id"];
+            isOneToOne: true;
+            referencedRelation: "historial_publico";
+            referencedColumns: ["orden_id"];
+          },
+          {
+            foreignKeyName: "notas_internas_orden_orden_id_fkey";
+            columns: ["orden_id"];
+            isOneToOne: true;
+            referencedRelation: "ordenes";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       ordenes: {
         Row: {
           avisar_cliente: boolean;
@@ -312,7 +349,6 @@ export type Database = {
           id: string;
           importe: number | null;
           instrumento_id: string;
-          notas_internas: string | null;
           numero: number;
           pedido_cliente: string | null;
           presupuesto: number | null;
@@ -336,7 +372,6 @@ export type Database = {
           id?: string;
           importe?: number | null;
           instrumento_id: string;
-          notas_internas?: string | null;
           numero?: number;
           pedido_cliente?: string | null;
           presupuesto?: number | null;
@@ -359,7 +394,6 @@ export type Database = {
           id?: string;
           importe?: number | null;
           instrumento_id?: string;
-          notas_internas?: string | null;
           numero?: number;
           pedido_cliente?: string | null;
           presupuesto?: number | null;
@@ -444,6 +478,7 @@ export type Database = {
           estado_instrumento: Database["public"]["Enums"]["estado_instrumento_venta"];
           id: string;
           instrumento_id: string;
+          instrumento_tipo: Database["public"]["Enums"]["tipo_instrumento"];
           moneda: string;
           mostrar_historial: boolean;
           pide_revision: boolean;
@@ -466,6 +501,7 @@ export type Database = {
           estado_instrumento: Database["public"]["Enums"]["estado_instrumento_venta"];
           id?: string;
           instrumento_id: string;
+          instrumento_tipo: Database["public"]["Enums"]["tipo_instrumento"];
           moneda?: string;
           mostrar_historial?: boolean;
           pide_revision?: boolean;
@@ -487,6 +523,7 @@ export type Database = {
           estado_instrumento?: Database["public"]["Enums"]["estado_instrumento_venta"];
           id?: string;
           instrumento_id?: string;
+          instrumento_tipo?: Database["public"]["Enums"]["tipo_instrumento"];
           moneda?: string;
           mostrar_historial?: boolean;
           pide_revision?: boolean;

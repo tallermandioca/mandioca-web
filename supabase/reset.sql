@@ -2,6 +2,7 @@
 -- Auth users are not touched (they re-link to profiles through the auth trigger on next seed:usuarios).
 
 drop trigger if exists trg_auth_user_creado on auth.users;
+drop trigger if exists trg_auth_user_confirmado on auth.users;
 
 drop policy if exists publicas_lee on storage.objects;
 drop policy if exists publicas_admin on storage.objects;
@@ -16,6 +17,7 @@ drop view if exists vendedores_publicos;
 drop view if exists historial_publico;
 drop view if exists instrumentos_publicos;
 
+drop table if exists notas_internas_orden cascade;
 drop table if exists fotos_publicacion cascade;
 drop table if exists publicaciones_venta cascade;
 drop table if exists recordatorios cascade;
@@ -30,6 +32,8 @@ drop table if exists perfiles cascade;
 drop table if exists _migraciones cascade;
 
 drop function if exists fn_auth_user_creado();
+drop function if exists fn_perfiles_before_update();
+drop function if exists fn_publicaciones_tipo();
 drop function if exists fn_publicaciones_sync_en_venta();
 drop function if exists fn_publicaciones_before_write();
 drop function if exists fn_instrumentos_before_update();

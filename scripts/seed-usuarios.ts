@@ -4,14 +4,19 @@
  *
  *   npm run seed:usuarios
  *
- * Demo password for every account: mandioca123
+ * Demo password for the client accounts: mandioca123
+ * The admin password comes from SEED_ADMIN_PASSWORD or is generated and printed once.
  */
 import { config } from "dotenv";
 import { createClient } from "@supabase/supabase-js";
 
 config({ path: ".env.local" });
 
+import { randomBytes } from "node:crypto";
+
 const DEMO_PASSWORD = "mandioca123";
+const ADMIN_EMAIL = "tallermandioca.dev@gmail.com";
+const adminPassword = process.env.SEED_ADMIN_PASSWORD ?? randomBytes(12).toString("base64url");
 
 const usuarios = [
   { email: "tallermandioca.dev@gmail.com", nombre: "Taller Mandioca" },
@@ -40,7 +45,12 @@ async function main(): Promise<void> {
 
   for (const usuario of usuarios) {
     const id = byEmail.get(usuario.email);
+    const password = usuario.email === ADMIN_EMAIL ? adminPassword : DEMO_PASSWORD;
     if (id) {
+      if (usuario.email === ADMIN_EMAIL) {
+        const { error } = await supabase.auth.admin.updateUserById(id, { password });
+        if (error) throw error;
+      }
       // Re-link in case the profiles were re-seeded (seed.sql resets user_id).
       const { error } = await supabase
         .from("perfiles")
@@ -53,7 +63,7 @@ async function main(): Promise<void> {
     }
     const { error } = await supabase.auth.admin.createUser({
       email: usuario.email,
-      password: DEMO_PASSWORD,
+      password,
       email_confirm: true,
       user_metadata: { nombre: usuario.nombre },
     });
@@ -67,7 +77,9 @@ async function main(): Promise<void> {
   if (sinVincular.length > 0) {
     console.warn("Perfiles sin usuario:", sinVincular.map((p) => p.email).join(", "));
   }
-  console.log(`listo: ${perfiles.length} perfiles, contraseña demo "${DEMO_PASSWORD}"`);
+  console.log(
+    `listo: ${perfiles.length} perfiles. Clientes demo: "${DEMO_PASSWORD}". Admin ${ADMIN_EMAIL}: "${adminPassword}" (guardala, no se vuelve a mostrar)`,
+  );
 }
 
 main().catch((error: unknown) => {

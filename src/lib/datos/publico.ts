@@ -113,10 +113,10 @@ export async function listarPublicaciones(filtros: FiltrosVenta = {}): Promise<P
   let consulta = supabase
     .from("publicaciones_venta")
     .select(
-      "id, titulo, descripcion, precio, moneda, estado_instrumento, con_estuche, acepta_permuta, revisado_por_taller, revisado_at, mostrar_historial, created_at, fotos_publicacion(url, orden), instrumentos!inner(tipo)",
+      "id, titulo, descripcion, precio, moneda, estado_instrumento, con_estuche, acepta_permuta, revisado_por_taller, revisado_at, mostrar_historial, created_at, fotos_publicacion(url, orden)",
     )
     .eq("estado", "publicada");
-  if (filtros.tipo) consulta = consulta.eq("instrumentos.tipo", filtros.tipo);
+  if (filtros.tipo) consulta = consulta.eq("instrumento_tipo", filtros.tipo);
   if (filtros.precioMin !== undefined) consulta = consulta.gte("precio", filtros.precioMin);
   if (filtros.precioMax !== undefined) consulta = consulta.lte("precio", filtros.precioMax);
   if (filtros.revisado) consulta = consulta.eq("revisado_por_taller", true);

@@ -44,6 +44,7 @@ async function migrate(sql: Sql): Promise<void> {
     nombre text primary key,
     aplicada_at timestamptz not null default now()
   )`);
+  await sql.unsafe("alter table _migraciones enable row level security");
   const applied = new Set(
     (await sql<{ nombre: string }[]>`select nombre from _migraciones`).map((r) => r.nombre),
   );
