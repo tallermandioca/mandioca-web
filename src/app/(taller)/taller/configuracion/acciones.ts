@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { requerirRol } from "@/lib/auth";
+import { parsearImporte } from "@/lib/formato";
 import { normalizarWhatsapp } from "@/lib/notificaciones/whatsapp";
 import { crearClienteServidor } from "@/lib/supabase/server";
 
@@ -41,13 +42,12 @@ export async function guardarPlantilla(_e: Resultado, formData: FormData): Promi
   const nombre = texto(formData, "nombre");
   if (!nombre) return { error: "Falta el nombre." };
   const meses = Number(texto(formData, "meses_hasta_revision") ?? "6");
-  const precioTexto = texto(formData, "precio_base");
-  const precio = precioTexto ? Number(precioTexto.replace(/\./g, "").replace(",", ".")) : null;
+  const precio = parsearImporte(formData.get("precio_base"));
   const datos = {
     nombre,
     detalle_sugerido: texto(formData, "detalle_sugerido"),
     meses_hasta_revision: Number.isFinite(meses) && meses >= 0 ? Math.round(meses) : 6,
-    precio_base: precio !== null && Number.isFinite(precio) ? precio : null,
+    precio_base: precio,
     requiere_presupuesto: formData.get("requiere_presupuesto") !== null,
     activo: formData.get("activo") !== null,
     orden: Number(texto(formData, "orden") ?? "0") || 0,

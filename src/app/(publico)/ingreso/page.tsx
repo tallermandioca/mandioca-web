@@ -39,7 +39,7 @@ export default async function Ingreso({ searchParams }: PageProps<"/ingreso">) {
       ) : null}
       <FormularioIngreso volver={volver} googleHabilitado={process.env.NEXT_PUBLIC_GOOGLE_AUTH === "1"} />
       <div className="mute text-center">
-        ¿Primera vez? La cuenta se crea cuando dejás un instrumento en el taller.
+        ¿Primera vez? Entrá con Google o con tu email. El taller después vincula tu cuenta a tus instrumentos.
       </div>
     </Contenido>
   );

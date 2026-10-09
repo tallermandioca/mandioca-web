@@ -59,7 +59,8 @@ export default async function DetalleOrden({ params, searchParams }: PageProps<"
   const urls = await resolverFotos(fotos.map((f) => f.url));
   const siguientes = siguientesEstados(orden.estado, orden.tipos_trabajo?.requiere_presupuesto === false);
   const creada = primero(sp.creada) === "1";
-  const cerrada = primero(sp.cerrada) === "1";
+  const cerrada = Boolean(primero(sp.cerrada));
+  const portfolio = primero(sp.portfolio);
   const volverCierre = primero(sp.volver) === "cierre";
 
   return (
@@ -76,6 +77,18 @@ export default async function DetalleOrden({ params, searchParams }: PageProps<"
           {creada ? `Orden ${numero} creada.` : `Orden ${numero} cerrada: lista para retirar.`}{" "}
           {orden.avisar_cliente && wa ? "Mandale el WhatsApp con el botón de abajo." : ""}
         </div>
+      ) : null}
+      {portfolio === "sinfotos" ? (
+        <Nota>
+          No se publicó en Trabajos: la galería necesita foto del antes y del después. Subilas acá y volvé a
+          cerrar desde la edición si querés publicarlo.
+        </Nota>
+      ) : null}
+      {portfolio === "errorfotos" || portfolio === "errorportfolio" ? (
+        <Nota>
+          La orden se cerró, pero no se pudo publicar en Trabajos. Probá de nuevo más tarde desde
+          Configuración.
+        </Nota>
       ) : null}
 
       <div className="flex items-start justify-between gap-2">

@@ -5,6 +5,7 @@ import { QrCode, Search } from "lucide-react";
 import { useActionState, useState } from "react";
 import { CamaraFotos } from "@/components/taller/CamaraFotos";
 import { Dictado } from "@/components/taller/Dictado";
+import { FotoUnica } from "@/components/taller/FotoUnica";
 import { Boton } from "@/components/ui/Boton";
 import type { ClienteResumen } from "@/lib/datos/taller";
 import { ETIQUETA_TIPO_INSTRUMENTO, nombreInstrumento } from "@/lib/formato";
@@ -90,7 +91,14 @@ export function FormularioNuevaOrden({ q, resultados, seleccionado, instrumentoI
               </Link>
             ))}
           </div>
-          <Boton type="button" variante="borde" onClick={() => setClienteNuevo(true)}>
+          <Boton
+            type="button"
+            variante="borde"
+            onClick={() => {
+              setClienteNuevo(true);
+              setInstrumento("nuevo");
+            }}
+          >
             + Cliente nuevo
           </Boton>
         </>
@@ -193,16 +201,7 @@ export function FormularioNuevaOrden({ q, resultados, seleccionado, instrumentoI
                   <input name="modelo" placeholder="Telecaster" />
                 </label>
               </div>
-              <label className="field">
-                Foto del número de serie
-                <input
-                  type="file"
-                  name="foto_serie"
-                  accept="image/*"
-                  capture="environment"
-                  className="!min-h-0 !p-2"
-                />
-              </label>
+              <FotoUnica name="foto_serie" etiqueta="Foto del número de serie" />
             </div>
           ) : null}
 

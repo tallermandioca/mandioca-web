@@ -15,7 +15,7 @@ export default async function Clientes({ searchParams }: PageProps<"/taller/clie
   await requerirRol("admin", "/taller/clientes");
   const sp = await searchParams;
   const q = (Array.isArray(sp.q) ? sp.q[0] : sp.q) ?? "";
-  const clientes = await buscarClientes(q);
+  const clientes = await buscarClientes(q, false);
 
   return (
     <Contenido>

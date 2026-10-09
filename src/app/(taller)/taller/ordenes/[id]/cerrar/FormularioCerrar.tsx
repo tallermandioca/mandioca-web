@@ -101,8 +101,9 @@ export function FormularioCerrar(p: Props) {
             <input name="titulo_portfolio" defaultValue={p.tituloSugerido} />
           </label>
           {!p.tieneAntes ? (
-            <div className="mute">
-              Esta orden no tiene foto del antes: se publica solo con la del después.
+            <div className="rounded-sm bg-warn-bg px-3 py-2 text-sm text-warn-t">
+              Esta orden no tiene foto del antes. La galería solo muestra trabajos con antes y después, así
+              que no se va a publicar.
             </div>
           ) : null}
         </>

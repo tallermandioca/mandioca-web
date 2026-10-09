@@ -110,27 +110,49 @@ export interface ClienteResumen {
   }[];
 }
 
-export async function buscarClientes(q: string): Promise<ClienteResumen[]> {
+const SELECT_CLIENTE =
+  "id, nombre, whatsapp, email, estado, user_id, instrumentos(id, tipo, marca, modelo, numero_serie)";
+
+/** PostgREST filter values: strip characters that would break the filter grammar. */
+function patronBusqueda(texto: string): string {
+  return `%${texto.replace(/[%_,().\\"']/g, " ").trim()}%`;
+}
+
+export async function clientePorId(id: string): Promise<ClienteResumen | null> {
+  const supabase = await crearClienteServidor();
+  const { data } = await supabase
+    .from("perfiles")
+    .select(SELECT_CLIENTE)
+    .eq("id", id)
+    .eq("rol", "cliente")
+    .maybeSingle();
+  return (data as ClienteResumen | null) ?? null;
+}
+
+/** Client search. By default only active clients (the ones an order can be created for). */
+export async function buscarClientes(q: string, soloActivos = true): Promise<ClienteResumen[]> {
   const supabase = await crearClienteServidor();
   const texto = q.trim();
   let consulta = supabase
     .from("perfiles")
-    .select(
-      "id, nombre, whatsapp, email, estado, user_id, instrumentos(id, tipo, marca, modelo, numero_serie)",
-    )
+    .select(SELECT_CLIENTE)
     .eq("rol", "cliente")
     .order("nombre")
     .limit(60);
+  if (soloActivos) consulta = consulta.eq("estado", "activo");
   if (texto) {
-    const patron = `%${texto.replace(/[%_]/g, "")}%`;
-    consulta = consulta.or(`nombre.ilike.${patron},whatsapp.ilike.${patron},email.ilike.${patron}`);
+    const patron = patronBusqueda(texto);
+    const soloDigitos = texto.replace(/\D/g, "");
+    const filtros = [`nombre.ilike.${patron}`, `email.ilike.${patron}`];
+    if (soloDigitos.length >= 3) filtros.push(`whatsapp.ilike.%${soloDigitos}%`);
+    consulta = consulta.or(filtros.join(","));
   }
   const { data } = await consulta;
   let clientes = (data ?? []) as ClienteResumen[];
 
   // Also match by instrument brand/model/serial.
   if (texto) {
-    const patron = `%${texto.replace(/[%_]/g, "")}%`;
+    const patron = patronBusqueda(texto);
     const { data: porInstrumento } = await supabase
       .from("instrumentos")
       .select("dueno_id")
@@ -139,12 +161,9 @@ export async function buscarClientes(q: string): Promise<ClienteResumen[]> {
     const ids = new Set((porInstrumento ?? []).map((i) => i.dueno_id));
     const faltan = [...ids].filter((id) => !clientes.some((c) => c.id === id));
     if (faltan.length > 0) {
-      const { data: extra } = await supabase
-        .from("perfiles")
-        .select(
-          "id, nombre, whatsapp, email, estado, user_id, instrumentos(id, tipo, marca, modelo, numero_serie)",
-        )
-        .in("id", faltan);
+      let extraConsulta = supabase.from("perfiles").select(SELECT_CLIENTE).in("id", faltan);
+      if (soloActivos) extraConsulta = extraConsulta.eq("estado", "activo");
+      const { data: extra } = await extraConsulta;
       clientes = [...clientes, ...((extra ?? []) as ClienteResumen[])];
     }
   }

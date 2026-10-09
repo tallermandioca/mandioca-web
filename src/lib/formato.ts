@@ -45,6 +45,27 @@ export function formatearImporte(valor: number | string | null | undefined, mone
   }).format(numero);
 }
 
+/**
+ * Parses an amount typed in Argentina ("12.500,50", "12500,5", "12500.5", "850000").
+ * A single dot followed by 1–2 digits is a decimal separator; otherwise dots are thousands.
+ */
+export function parsearImporte(valor: FormDataEntryValue | string | null | undefined): number | null {
+  const texto = String(valor ?? "")
+    .trim()
+    .replace(/[$\s]/g, "");
+  if (!texto) return null;
+  let normalizado: string;
+  if (texto.includes(",")) {
+    normalizado = texto.replace(/\./g, "").replace(",", ".");
+  } else if (/^\d+\.\d{1,2}$/.test(texto)) {
+    normalizado = texto;
+  } else {
+    normalizado = texto.replace(/\./g, "");
+  }
+  const n = Number(normalizado);
+  return Number.isFinite(n) && n >= 0 ? Math.round(n * 100) / 100 : null;
+}
+
 export const ETIQUETA_TIPO_INSTRUMENTO: Record<string, string> = {
   electrica: "Guitarra eléctrica",
   acustica: "Guitarra acústica",

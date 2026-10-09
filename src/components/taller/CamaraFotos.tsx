@@ -2,6 +2,7 @@
 
 import { Camera, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { comprimirImagen } from "@/lib/imagenes";
 
 interface Props {
   name: string;
@@ -11,11 +12,13 @@ interface Props {
 
 /**
  * Photo picker for forms. On phones `capture` opens the camera directly.
+ * Photos are compressed on the device before they reach the form.
  * Keeps a DataTransfer so removed photos are not submitted.
  */
 export function CamaraFotos({ name, etiqueta, maximo = 6 }: Props) {
   const input = useRef<HTMLInputElement>(null);
   const [archivos, setArchivos] = useState<File[]>([]);
+  const [procesando, setProcesando] = useState(false);
   const previas = useMemo(() => archivos.map((f) => URL.createObjectURL(f)), [archivos]);
 
   useEffect(() => {
@@ -31,9 +34,12 @@ export function CamaraFotos({ name, etiqueta, maximo = 6 }: Props) {
     }
   }
 
-  function agregar(nuevos: FileList | null) {
-    if (!nuevos) return;
-    sincronizar([...archivos, ...Array.from(nuevos)].slice(0, maximo));
+  async function agregar(nuevos: File[]) {
+    if (nuevos.length === 0) return;
+    setProcesando(true);
+    const comprimidos = await Promise.all(nuevos.map((f) => comprimirImagen(f)));
+    sincronizar([...archivos, ...comprimidos].slice(0, maximo));
+    setProcesando(false);
   }
 
   return (
@@ -57,7 +63,7 @@ export function CamaraFotos({ name, etiqueta, maximo = 6 }: Props) {
         {archivos.length < maximo ? (
           <label className="flex size-16 cursor-pointer flex-col items-center justify-center gap-1 rounded-md border border-dashed border-ink text-[10px] font-semibold">
             <Camera className="size-5" aria-hidden />
-            Sacar foto
+            {procesando ? "…" : "Sacar foto"}
             <input
               type="file"
               accept="image/*"
@@ -65,8 +71,9 @@ export function CamaraFotos({ name, etiqueta, maximo = 6 }: Props) {
               multiple
               className="sr-only"
               onChange={(e) => {
-                agregar(e.target.files);
+                const lista = Array.from(e.target.files ?? []);
                 e.target.value = "";
+                void agregar(lista);
               }}
             />
           </label>

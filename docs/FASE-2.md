@@ -55,3 +55,19 @@ Google se muestra solo cuando `NEXT_PUBLIC_GOOGLE_AUTH=1`; hasta configurarlo, e
 - Fase 6: Instagram, PWA, pulido, Lighthouse, documento de traspaso.
 - Configurar el proveedor Google en Supabase (ver README) y poner `NEXT_PUBLIC_GOOGLE_AUTH=1`.
 - Desactivar "Allow new users to sign up" ya **no** corresponde: ahora los clientes se registran solos. Dejarlo activado.
+
+## Revisión de código (cierre de fase)
+
+Revisión independiente de los commits de la fase. Corregido en `0009_revision_fase_2.sql` y en el código:
+
+- **Crítico**: las fotos del celular (2 a 5 MB) superaban el límite de 1 MB de las server actions. Ahora se **comprimen en el dispositivo** (`src/lib/imagenes.ts`, lado máximo 1600 px, JPEG 0.82, ~300 KB) antes de enviarse, y el límite se subió a 8 MB. Vercel tope 4,5 MB por request: con fotos comprimidas alcanza.
+- Vincular una cuenta a un cliente existente ahora es **una transacción SQL** (`fn_vincular_cuenta`, solo admin), que además mueve instrumentos u órdenes que se hubieran creado por error sobre el perfil pendiente. Antes, un fallo a mitad de camino dejaba un usuario sin perfil.
+- Si alguien se registra con un email que ya tiene un perfil vinculado, el trigger crea el perfil pendiente **sin email** en vez de fallar (la restricción de contacto se relaja para pendientes).
+- **Importes**: nuevo `parsearImporte` (con tests) entiende "12.500,50", "12500,5", "12500.5" y "850.000". Antes, guardar dos veces un importe con centavos lo multiplicaba por 10.
+- **Nueva orden** valida todo (cliente, instrumento, tipo, fecha) antes del primer insert: un error ya no deja clientes o instrumentos huérfanos. El cliente seleccionado se busca por id (antes solo entre los primeros 60).
+- **Cerrar trabajo**: el camino hasta `listo` se calcula con búsqueda sobre la máquina de estados (ya no se traba en `presupuestado` con plantillas sin presupuesto); las fotos se suben recién después de validar; cada error de foto se informa; si falta la foto del antes o del después **no se publica** en Trabajos (regla del prompt) y la orden lo avisa. Desde "Cierre del día" vuelve a la lista.
+- Búsqueda de clientes: sin caracteres que rompan el filtro de PostgREST, y los números de WhatsApp se buscan por dígitos. Solo clientes activos al crear órdenes.
+- Editar la próxima revisión de un instrumento mueve su recordatorio pendiente (trigger).
+- El escáner apaga la cámara si se cierra la pantalla durante el permiso; "Quitar foto" borra también el archivo del bucket.
+
+Menores que quedan: `editarCliente` no bloquea poner un email ya usado por otra cuenta (la base lo rechaza con un error genérico); las órdenes de un cliente pendiente creadas antes de vincular se mueven al vincular, pero no se pueden crear nuevas hasta aprobarlo.

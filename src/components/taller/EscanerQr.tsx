@@ -52,9 +52,17 @@ export function EscanerQr({ alLeer }: { alLeer?: (token: string) => void }) {
         setEstado("sin_camara");
         return;
       }
-      if (!activo || !video.current) return;
+      if (!activo || !video.current) {
+        stream.getTracks().forEach((t) => t.stop());
+        return;
+      }
       video.current.srcObject = stream;
-      await video.current.play();
+      try {
+        await video.current.play();
+      } catch {
+        setEstado("sin_camara");
+        return;
+      }
       setEstado("escaneando");
 
       const w = window as unknown as { BarcodeDetector?: ConstructorDetector };

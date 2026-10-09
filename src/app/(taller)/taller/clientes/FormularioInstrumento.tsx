@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { FotoUnica } from "@/components/taller/FotoUnica";
 import { Boton } from "@/components/ui/Boton";
 import { ETIQUETA_TIPO_INSTRUMENTO } from "@/lib/formato";
 import { crearInstrumento, editarInstrumento } from "./acciones";
@@ -70,16 +71,7 @@ export function FormularioInstrumento({
           <input name="anio" inputMode="numeric" defaultValue={valores.anio ?? ""} />
         </label>
       </div>
-      <label className="field">
-        Foto del número de serie (opcional)
-        <input
-          type="file"
-          name="foto_serie"
-          accept="image/*"
-          capture="environment"
-          className="!min-h-0 !p-2"
-        />
-      </label>
+      <FotoUnica name="foto_serie" etiqueta="Foto del número de serie (opcional)" />
 
       {!compacto ? (
         <>

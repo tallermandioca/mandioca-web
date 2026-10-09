@@ -817,6 +817,7 @@ export type Database = {
         };
         Returns: boolean;
       };
+      fn_vincular_cuenta: { Args: { existente_id: string; pendiente_id: string }; Returns: undefined };
     };
     Enums: {
       canal_aviso: "whatsapp" | "email";

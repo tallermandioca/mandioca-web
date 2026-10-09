@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Contenido } from "@/components/layout/Marco";
 import { requerirRol } from "@/lib/auth";
-import { buscarClientes, tiposTrabajo } from "@/lib/datos/taller";
+import { buscarClientes, clientePorId, tiposTrabajo } from "@/lib/datos/taller";
 import { formatearFecha } from "@/lib/formato";
 import { hoyArgentina } from "@/lib/hoy";
 import { crearClienteServidor } from "@/lib/supabase/server";
@@ -34,12 +34,11 @@ export default async function NuevaOrden({ searchParams }: PageProps<"/taller/or
     if (!clienteId) instrumentoId = null;
   }
 
-  const [tipos, resultados] = await Promise.all([tiposTrabajo(), q || !clienteId ? buscarClientes(q) : []]);
-  let seleccionado = resultados.find((c) => c.id === clienteId) ?? null;
-  if (clienteId && !seleccionado) {
-    const encontrados = await buscarClientes("");
-    seleccionado = encontrados.find((c) => c.id === clienteId) ?? null;
-  }
+  const [tipos, resultados, seleccionado] = await Promise.all([
+    tiposTrabajo(),
+    q ? buscarClientes(q) : Promise.resolve([]),
+    clienteId ? clientePorId(clienteId) : Promise.resolve(null),
+  ]);
 
   return (
     <Contenido className="pb-28">
