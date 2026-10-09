@@ -103,128 +103,132 @@
   --radius-md: 6px;
 }
 
-html {
-  height: 100%;
-  scroll-padding-top: env(safe-area-inset-top, 0px);
-}
+@layer base {
+  html {
+    height: 100%;
+    scroll-padding-top: env(safe-area-inset-top, 0px);
+  }
 
-body {
-  margin: 0;
-  min-height: 100%;
-  background: var(--frame);
-  color: var(--ink);
-  font-family: var(--font-sans);
-  font-size: 16px;
-  line-height: 1.45;
-  -webkit-font-smoothing: antialiased;
-}
-
-@media (max-width: 519px) {
   body {
-    background: var(--paper);
+    margin: 0;
+    min-height: 100%;
+    background: var(--frame);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  @media (max-width: 519px) {
+    body {
+      background: var(--paper);
+    }
+  }
+
+  button {
+    font: inherit;
+    color: inherit;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--red);
+    outline-offset: 2px;
   }
 }
 
-button {
-  font: inherit;
-  color: inherit;
-}
-
-:focus-visible {
-  outline: 3px solid var(--red);
-  outline-offset: 2px;
-}
-
-/* Shared primitives used across the app (keeps markup close to the prototype). */
-.h1 {
-  margin: 0;
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 38px;
-  line-height: 0.95;
-  text-transform: uppercase;
-}
-.h2 {
-  margin: 0;
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 20px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-.h3 {
-  margin: 0;
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 19px;
-  line-height: 1.1;
-}
-.kicker {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 14px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--red);
-}
-.lead {
-  margin: 0;
-  color: var(--ink2);
-  font-size: 16px;
-}
-.mute {
-  color: var(--mute);
-  font-size: 13px;
-}
-.card {
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 6px;
-}
-.chips {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  padding-bottom: 4px;
-  scrollbar-width: none;
-}
-.chips::-webkit-scrollbar {
-  display: none;
-}
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  font-size: 12px;
-  color: var(--mute);
-}
-.field input,
-.field textarea,
-.field select {
-  font: inherit;
-  font-size: 16px;
-  color: var(--ink);
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 4px;
-  padding: 10px 12px;
-  min-height: 46px;
-  width: 100%;
-}
-.field textarea {
-  resize: none;
-}
-.tbl {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-}
-.tbl td {
-  padding: 9px 6px;
-  border-bottom: 1px solid var(--line2);
-  vertical-align: top;
-}
-.tbl td:first-child {
-  white-space: nowrap;
-  color: var(--mute);
+@layer components {
+  /* Shared primitives used across the app (keeps markup close to the prototype). */
+  .h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 38px;
+    line-height: 0.95;
+    text-transform: uppercase;
+  }
+  .h2 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .h3 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 19px;
+    line-height: 1.1;
+  }
+  .kicker {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--red);
+  }
+  .lead {
+    margin: 0;
+    color: var(--ink2);
+    font-size: 16px;
+  }
+  .mute {
+    color: var(--mute);
+    font-size: 13px;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+  }
+  .chips {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+  .chips::-webkit-scrollbar {
+    display: none;
+  }
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--mute);
+  }
+  .field input,
+  .field textarea,
+  .field select {
+    font: inherit;
+    font-size: 16px;
+    color: var(--ink);
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 10px 12px;
+    min-height: 46px;
+    width: 100%;
+  }
+  .field textarea {
+    resize: none;
+  }
+  .tbl {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .tbl td {
+    padding: 9px 6px;
+    border-bottom: 1px solid var(--line2);
+    vertical-align: top;
+  }
+  .tbl td:first-child {
+    white-space: nowrap;
+    color: var(--mute);
+  }
 }

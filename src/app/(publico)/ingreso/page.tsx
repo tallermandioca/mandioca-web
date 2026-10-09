@@ -29,6 +29,14 @@ export default async function Ingreso({ searchParams }: PageProps<"/ingreso">) {
       />
       <h1 className="h1 text-center">Mi cuenta</h1>
       <p className="lead text-center">Tus instrumentos, sus trabajos y cuándo toca la próxima revisión.</p>
+      {error === "google" ? (
+        <div
+          role="alert"
+          className="rounded-sm border border-red-line border-l-[5px] border-l-red bg-red-bg px-[14px] py-3 text-sm"
+        >
+          No pudimos iniciar el ingreso con Google. Si el problema sigue, entrá con el link por email.
+        </div>
+      ) : null}
       {error === "link" ? (
         <div
           role="alert"
