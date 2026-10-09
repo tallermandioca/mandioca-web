@@ -22,7 +22,6 @@ export const metadata: Metadata = {
   },
   description:
     "Luthería, reparación y calibración. Cada instrumento sale con su ficha, su historial y la próxima revisión agendada.",
-  icons: { icon: "/icons/icon-192.png", apple: "/icons/apple-touch-icon.png" },
   manifest: "/manifest.webmanifest",
   appleWebApp: { capable: true, title: "Mandioca", statusBarStyle: "black" },
 };
