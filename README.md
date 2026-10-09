@@ -78,6 +78,12 @@ Los clientes se registran solos (Google o link por email) y el taller los aprueb
 - `CRON_SECRET`: texto largo al azar. Vercel ejecuta `/api/cron/recordatorios` todos los días a las 9:00 (hora argentina) según `vercel.json` y manda ese secreto. Para probar a mano: `curl -H "Authorization: Bearer <CRON_SECRET>" https://<dominio>/api/cron/recordatorios`.
 - Recomendado: en Supabase → Authentication → SMTP Settings usar Resend como SMTP para los links de ingreso.
 
+## Instagram, PWA y traspaso
+
+- El feed de Instagram se conecta desde Configuración → Instagram una vez cargadas `INSTAGRAM_APP_ID`, `INSTAGRAM_APP_SECRET` y `APP_SECRET_KEY`. Pasos para crear la app de Meta en [docs/TRASPASO.md](docs/TRASPASO.md).
+- El sitio es instalable como app (manifest en `public/manifest.webmanifest`, íconos en `public/icons`).
+- [docs/TRASPASO.md](docs/TRASPASO.md) reúne todo lo que necesita quien reciba el proyecto: cuentas, variables, operación y configuración fuera del código.
+
 ## Scripts
 
 | Comando | Qué hace |
@@ -120,4 +126,4 @@ src/proxy.ts          refresco de sesión y guard de /taller y /mi-cuenta
 
 ## Fases
 
-El avance por fases está documentado en `docs/FASE-N.md`.
+El avance por fases está documentado en `docs/FASE-1.md` a `docs/FASE-6.md`. Las seis fases del prompt están completas.

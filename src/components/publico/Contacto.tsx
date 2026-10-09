@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { SITIO } from "@/config/sitio";
 import type { ConfiguracionPublica } from "@/lib/datos/publico";
 import { linkWhatsapp } from "@/lib/notificaciones/whatsapp";
@@ -32,6 +33,9 @@ export function Contacto({ config }: { config: ConfiguracionPublica | null }) {
         {oPlaceholder(config?.direccion, "[DIRECCIÓN DEL TALLER]")} ·{" "}
         {oPlaceholder(config?.horario, "lunes a viernes [HORARIO] · sábados con turno")}
       </div>
+      <Link href="/privacidad" className="mute w-fit">
+        Política de privacidad
+      </Link>
     </div>
   );
 }

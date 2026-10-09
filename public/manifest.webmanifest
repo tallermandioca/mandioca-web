@@ -1,0 +1,20 @@
+{
+  "name": "Taller Mandioca",
+  "short_name": "Mandioca",
+  "description": "Luthería, reparación y calibración. Ficha, historial y próxima revisión de tu instrumento.",
+  "lang": "es-AR",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#F3EEE4",
+  "theme_color": "#161412",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Mi cuenta", "url": "/mi-cuenta" },
+    { "name": "Panel del taller", "url": "/taller" }
+  ]
+}
