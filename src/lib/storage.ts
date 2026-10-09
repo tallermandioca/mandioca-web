@@ -75,3 +75,19 @@ export async function resolverFotos(
   }
   return resultado;
 }
+
+/** Client-uploaded instrument photo: public bucket, under the client folder the RLS policy allows. */
+export async function subirFotoInstrumentoCliente(
+  perfilId: string,
+  instrumentoId: string,
+  file: File,
+): Promise<string> {
+  const supabase = await crearClienteServidor();
+  const nombre = `perfiles/${perfilId}/instrumentos/${instrumentoId}-${Date.now()}.${extension(file)}`;
+  const { error } = await supabase.storage.from(BUCKET_PUBLICO).upload(nombre, file, {
+    contentType: file.type || "image/jpeg",
+    upsert: false,
+  });
+  if (error) throw new Error(`No se pudo subir la foto: ${error.message}`);
+  return supabase.storage.from(BUCKET_PUBLICO).getPublicUrl(nombre).data.publicUrl;
+}
