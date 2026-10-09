@@ -111,8 +111,19 @@ export async function crearPublicacion(_e: Resultado, formData: FormData): Promi
   if (error) return { error: "No se pudo crear: " + error.message };
 
   const eFotos = await subirFotos(sesion.perfil.id, data.id, formData);
+  let publicadaDirecto = false;
+  if (solicitar) {
+    // Succeeds only when the workshop turned on automatic moderation; otherwise the trigger rejects it.
+    const { error: eDirecto } = await supabase
+      .from("publicaciones_venta")
+      .update({ estado: "publicada" })
+      .eq("id", data.id);
+    publicadaDirecto = !eDirecto;
+  }
   refrescar(data.id);
-  redirect(`/mi-cuenta/publicaciones/${data.id}${eFotos ? "?error=fotos" : solicitar ? "?enviada=1" : ""}`);
+  redirect(
+    `/mi-cuenta/publicaciones/${data.id}${eFotos ? "?error=fotos" : publicadaDirecto ? "?publicada=1" : solicitar ? "?enviada=1" : ""}`,
+  );
 }
 
 export async function guardarPublicacion(_e: Resultado, formData: FormData): Promise<Resultado> {

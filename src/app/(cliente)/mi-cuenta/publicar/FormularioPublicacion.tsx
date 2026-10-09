@@ -143,6 +143,11 @@ export function FormularioPublicacion({
       />
       <Aviso r={r} />
       {editando ? (
+        <div className="mute">
+          Si la publicación ya está publicada, al cambiarla vuelve a revisión del taller.
+        </div>
+      ) : null}
+      {editando ? (
         <Boton type="submit" variante="oscuro" disabled={pendiente}>
           {pendiente ? "Guardando…" : "Guardar cambios"}
         </Boton>

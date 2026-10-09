@@ -46,6 +46,11 @@ export default async function DetallePublicacionCliente({
           Publicación creada y enviada al taller. Cuando la apruebe, aparece en el muestrario.
         </div>
       ) : null}
+      {primero(sp.publicada) ? (
+        <div className="rounded-sm bg-ok-bg px-[14px] py-3 text-sm text-ok-t">
+          Publicada. Ya se ve en el muestrario.
+        </div>
+      ) : null}
       {primero(sp.error) === "fotos" ? (
         <Nota>La publicación se creó pero alguna foto no se pudo subir. Probá de nuevo abajo.</Nota>
       ) : null}

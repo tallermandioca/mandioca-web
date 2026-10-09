@@ -4,6 +4,8 @@ import { rellenarPlantilla } from "./whatsapp";
 
 export const PLANTILLA_CALIBRACION =
   "Hola {nombre}! Te escribimos del Taller Mandioca. A tu {instrumento} le toca la revisión (vence el {fecha}). ¿Coordinamos un turno?";
+export const PLANTILLA_CUERDAS =
+  "Hola {nombre}! Te escribimos del Taller Mandioca. A tu {instrumento} le toca el cambio de cuerdas. ¿Lo traés cuando puedas?";
 export const PLANTILLA_LISTO =
   "Hola {nombre}! Tu {instrumento} está listo para retirar. Orden #{numero}. Te esperamos en el taller.";
 export const PLANTILLA_RECIBIDO =

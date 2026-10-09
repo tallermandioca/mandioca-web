@@ -20,31 +20,36 @@ function refrescar() {
   revalidatePath("/");
 }
 
+type EstadoPublicacion = Database["public"]["Enums"]["estado_publicacion"];
+
 async function actualizar(
   formData: FormData,
   cambios: Database["public"]["Tables"]["publicaciones_venta"]["Update"],
+  desde?: EstadoPublicacion[],
 ): Promise<Resultado> {
   await requerirRol("admin", "/taller/muestrario");
   const id = String(formData.get("id") ?? "");
   if (!id) return { error: "Falta la publicación." };
   const supabase = await crearClienteServidor();
-  const { error, count } = await supabase
-    .from("publicaciones_venta")
-    .update(cambios, { count: "exact" })
-    .eq("id", id);
+  let consulta = supabase.from("publicaciones_venta").update(cambios, { count: "exact" }).eq("id", id);
+  if (desde) consulta = consulta.in("estado", desde);
+  const { error, count } = await consulta;
   if (error) return { error: error.message };
-  if (!count) return { error: "No encontramos la publicación." };
+  if (!count) return { error: "La publicación cambió de estado. Recargá la página." };
   refrescar();
   return {};
 }
 
 export async function aprobarPublicacion(_e: Resultado, formData: FormData): Promise<Resultado> {
-  const r = await actualizar(formData, { estado: "publicada", solicita_publicacion: false });
+  const r = await actualizar(formData, { estado: "publicada", solicita_publicacion: false }, [
+    "borrador",
+    "pausada",
+  ]);
   return r.error ? r : { mensaje: "Publicada." };
 }
 
 export async function pausarPublicacionTaller(_e: Resultado, formData: FormData): Promise<Resultado> {
-  const r = await actualizar(formData, { estado: "pausada", solicita_publicacion: false });
+  const r = await actualizar(formData, { estado: "pausada", solicita_publicacion: false }, ["publicada"]);
   return r.error
     ? r
     : { mensaje: "Pausada. El cliente la ve como pausada y puede pedir publicarla de nuevo." };

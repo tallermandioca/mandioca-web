@@ -24,9 +24,19 @@ export function emailHabilitado(): boolean {
 }
 
 /** Minimal HTML wrapper so plain text templates look decent in mail clients. */
+function escaparHtml(valor: string): string {
+  return valor
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 export function htmlDesdeTexto(texto: string, titulo: string): string {
-  const escapado = texto.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  const conLinks = escapado.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" style="color:#C4302B">$1</a>');
+  const escapado = escaparHtml(texto);
+  const conLinks = escapado.replace(/(https?:\/\/[^\s"'<>]+)/g, '<a href="$1" style="color:#C4302B">$1</a>');
+  titulo = escaparHtml(titulo);
   return `<!doctype html><html lang="es"><body style="margin:0;background:#F3EEE4;font-family:Helvetica,Arial,sans-serif;color:#161412">
 <div style="max-width:520px;margin:0 auto;padding:24px 18px">
   <div style="background:#161412;color:#F3EEE4;padding:14px 18px;border-radius:6px 6px 0 0;font-weight:700;letter-spacing:.04em;text-transform:uppercase">Taller Mandioca</div>

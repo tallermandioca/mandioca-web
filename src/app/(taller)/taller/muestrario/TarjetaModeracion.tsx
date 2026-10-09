@@ -86,7 +86,7 @@ export function TarjetaModeracion({ p }: { p: PublicacionModeracion }) {
       </div>
       <Aviso r={ultimo} />
       <div className="flex flex-wrap gap-2">
-        {p.estado !== "publicada" && p.estado !== "vendida" ? (
+        {p.solicita_publicacion && p.estado !== "publicada" && p.estado !== "vendida" ? (
           <form action={accionAp}>
             {hidden}
             <Boton type="submit" tamano="chico" disabled={pAp}>

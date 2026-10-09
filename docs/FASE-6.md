@@ -35,3 +35,16 @@ El sitio es server-rendered, sin JS en las páginas públicas salvo la navegaci�
 - Correr Lighthouse sobre la URL desplegada y ajustar lo que aparezca.
 - Cuando haya dominio: Site URL y Redirect URLs en Supabase, `NEXT_PUBLIC_SITE_URL`, publicar la app de Google, verificar el dominio en Resend.
 - Borrar los datos de demo antes de salir a producción (ver TRASPASO, sección 7).
+
+## Revisión de código (cierre de fases 4 a 6)
+
+Sin huecos entre clientes: un cliente no puede tocar publicaciones ni fotos de otro, ni darse el sello. Corregido en `0011_revision_fases_4_6.sql` y en el código:
+
+- **Importante**: un cliente podía editar texto, precio o fotos de una publicación ya aprobada sin volver a moderación. Ahora, salvo con publicación automática, cualquier edición o foto nueva en una publicación publicada la pasa a pausada y vuelve a pedir aprobación (triggers en la base).
+- Índice único: una sola publicación activa por instrumento, también por API directa.
+- Con publicación automática, "Publicar" al crear publica directo.
+- El taller solo ve "Aprobar" en las que el cliente pidió publicar; aprobar y pausar verifican el estado actual (no se puede republicar una vendida por una carrera).
+- Cron de recordatorios: solo canal email, ordenado por fecha, marca `enviado` solo si seguía pendiente, y un email que falla no corta la corrida. Plantilla propia para "cuerdas".
+- Emails: escape completo de HTML (comillas y título).
+
+Menores que quedan: el OAuth de Instagram debe iniciarse desde el dominio de `NEXT_PUBLIC_SITE_URL` (no desde un preview de Vercel); el email de presupuesto puede salir sin importe si el taller pasa a "presupuestado" antes de cargarlo.

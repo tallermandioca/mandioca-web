@@ -33,6 +33,7 @@ drop table if exists _migraciones cascade;
 
 drop function if exists fn_auth_user_creado();
 drop function if exists fn_publicaciones_aprobada();
+drop function if exists fn_fotos_publicacion_insertada();
 drop function if exists fn_vincular_cuenta(uuid, uuid);
 drop function if exists fn_instrumentos_revision_editada();
 drop function if exists fn_ordenes_revision_editada();
