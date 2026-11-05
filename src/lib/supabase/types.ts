@@ -24,6 +24,7 @@ export type Database = {
           created_at: string;
           direccion: string | null;
           email: string | null;
+          foto_portada_url: string | null;
           horario: string | null;
           id: boolean;
           ig_token_encriptado: string | null;
@@ -41,6 +42,7 @@ export type Database = {
           created_at?: string;
           direccion?: string | null;
           email?: string | null;
+          foto_portada_url?: string | null;
           horario?: string | null;
           id?: boolean;
           ig_token_encriptado?: string | null;
@@ -57,6 +59,7 @@ export type Database = {
           created_at?: string;
           direccion?: string | null;
           email?: string | null;
+          foto_portada_url?: string | null;
           horario?: string | null;
           id?: boolean;
           ig_token_encriptado?: string | null;
@@ -744,15 +747,17 @@ export type Database = {
         Row: {
           direccion: string | null;
           email: string | null;
+          foto_portada_url: string | null;
           horario: string | null;
           instagram_user: string | null;
-          nombre_taller: string | null;
+          nombre_taller: string;
           whatsapp: string | null;
         };
         ComputedFields: never;
         Insert: {
           direccion?: string | null;
           email?: string | null;
+          foto_portada_url?: string | null;
           horario?: string | null;
           instagram_user?: string | null;
           nombre_taller?: string | null;
@@ -761,6 +766,7 @@ export type Database = {
         Update: {
           direccion?: string | null;
           email?: string | null;
+          foto_portada_url?: string | null;
           horario?: string | null;
           instagram_user?: string | null;
           nombre_taller?: string | null;
@@ -772,9 +778,9 @@ export type Database = {
         Row: {
           detalle_realizado: string | null;
           fecha_cierre: string | null;
-          orden_id: string | null;
-          publicacion_id: string | null;
-          tipo_trabajo: string | null;
+          orden_id: string;
+          publicacion_id: string;
+          tipo_trabajo: string;
         };
         ComputedFields: never;
         Relationships: [];
@@ -790,8 +796,8 @@ export type Database = {
           marca: string | null;
           modelo: string | null;
           proxima_revision: string | null;
-          publicacion_id: string | null;
-          tipo: Database["public"]["Enums"]["tipo_instrumento"] | null;
+          publicacion_id: string;
+          tipo: Database["public"]["Enums"]["tipo_instrumento"];
           trastes_cantidad: number | null;
           trastes_material: string | null;
         };
@@ -800,8 +806,8 @@ export type Database = {
       };
       vendedores_publicos: {
         Row: {
-          nombre: string | null;
-          publicacion_id: string | null;
+          nombre: string;
+          publicacion_id: string;
           whatsapp: string | null;
         };
         ComputedFields: never;

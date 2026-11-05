@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { requerirRol } from "@/lib/auth";
 import { parsearImporte } from "@/lib/formato";
 import { normalizarWhatsapp } from "@/lib/notificaciones/whatsapp";
+import { borrarFotoPublica, subirFotoPortada } from "@/lib/storage";
 import { crearClienteServidor } from "@/lib/supabase/server";
 
 export interface Resultado {
@@ -34,6 +35,28 @@ export async function guardarConfiguracion(_e: Resultado, formData: FormData): P
   if (error) return { error: "No se pudo guardar: " + error.message };
   revalidatePath("/", "layout");
   return { mensaje: "Configuración guardada." };
+}
+
+export async function guardarFotoPortada(_e: Resultado, formData: FormData): Promise<Resultado> {
+  await requerirRol("admin", "/taller/configuracion");
+  const supabase = await crearClienteServidor();
+  const { data: actual } = await supabase.from("configuracion").select("foto_portada_url").maybeSingle();
+  const quitar = formData.get("quitar") !== null;
+  const foto = formData.get("foto");
+  let url: string | null = null;
+  if (!quitar) {
+    if (!(foto instanceof File) || foto.size === 0) return { error: "Elegí una foto." };
+    try {
+      url = await subirFotoPortada(foto);
+    } catch (e) {
+      return { error: e instanceof Error ? e.message : "No se pudo subir la foto." };
+    }
+  }
+  const { error } = await supabase.from("configuracion").upsert({ id: true, foto_portada_url: url });
+  if (error) return { error: "No se pudo guardar: " + error.message };
+  if (actual?.foto_portada_url) await borrarFotoPublica(actual.foto_portada_url);
+  revalidatePath("/", "layout");
+  return { mensaje: quitar ? "Foto quitada." : "Foto de portada actualizada." };
 }
 
 export async function guardarPlantilla(_e: Resultado, formData: FormData): Promise<Resultado> {

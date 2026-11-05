@@ -36,10 +36,11 @@ export default async function Inicio() {
         Cada instrumento que entra sale con su ficha, su historial y la próxima revisión agendada.
       </p>
       <Foto
-        url={null}
+        url={config?.foto_portada_url}
         alt="El luthier en el banco del taller"
         marcador="[FOTO · luthier en el banco del taller]"
         className="h-[220px]"
+        prioridad
       />
       <div className="flex gap-3">
         <BotonEnlace href="/trabajos" variante="oscuro" className="flex-1">

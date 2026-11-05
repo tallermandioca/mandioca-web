@@ -5,7 +5,7 @@ import { requerirRol } from "@/lib/auth";
 import { configuracion } from "@/lib/datos/taller";
 import { formatearFechaHora } from "@/lib/formato";
 import { instagramConfigurado } from "@/lib/instagram";
-import { FormularioConfiguracion } from "./FormularioConfiguracion";
+import { FormularioConfiguracion, FormularioFotoPortada } from "./FormularioConfiguracion";
 
 export const dynamic = "force-dynamic";
 
@@ -108,6 +108,9 @@ export default async function Configuracion({ searchParams }: PageProps<"/taller
             </span>
           )}
         </div>
+      </div>
+      <div className="card p-3">
+        <FormularioFotoPortada url={config?.foto_portada_url ?? null} />
       </div>
       <div className="card p-3">
         <FormularioConfiguracion config={config} />

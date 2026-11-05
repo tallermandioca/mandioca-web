@@ -7,10 +7,12 @@ import { comprimirImagen } from "@/lib/imagenes";
 interface Props {
   name: string;
   etiqueta: string;
+  /** Opens the camera directly on phones; false lets the user pick from the gallery. */
+  camara?: boolean;
 }
 
 /** Single-photo picker (e.g. serial number). Compresses before the form is submitted. */
-export function FotoUnica({ name, etiqueta }: Props) {
+export function FotoUnica({ name, etiqueta, camara = true }: Props) {
   const input = useRef<HTMLInputElement>(null);
   const [archivo, setArchivo] = useState<File | null>(null);
   const [procesando, setProcesando] = useState(false);
@@ -51,11 +53,11 @@ export function FotoUnica({ name, etiqueta }: Props) {
         ) : (
           <label className="flex size-16 cursor-pointer flex-col items-center justify-center gap-1 rounded-md border border-dashed border-ink text-[10px] font-semibold">
             <Camera className="size-5" aria-hidden />
-            {procesando ? "…" : "Sacar foto"}
+            {procesando ? "…" : camara ? "Sacar foto" : "Elegir foto"}
             <input
               type="file"
               accept="image/*"
-              capture="environment"
+              capture={camara ? "environment" : undefined}
               className="sr-only"
               onChange={async (e) => {
                 const f = e.target.files?.[0] ?? null;

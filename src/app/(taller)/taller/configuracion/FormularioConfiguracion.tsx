@@ -1,9 +1,11 @@
 "use client";
 
 import { useActionState } from "react";
+import { FotoUnica } from "@/components/taller/FotoUnica";
 import { Boton } from "@/components/ui/Boton";
+import { Foto } from "@/components/ui/Foto";
 import type { Configuracion } from "@/lib/datos/taller";
-import { guardarPlantilla, guardarConfiguracion, type Resultado } from "./acciones";
+import { guardarFotoPortada, guardarPlantilla, guardarConfiguracion, type Resultado } from "./acciones";
 import type { TipoTrabajo } from "@/lib/datos/taller";
 
 export function Aviso({ r }: { r: Resultado }) {
@@ -111,6 +113,43 @@ export function FormularioConfiguracion({ config }: { config: Configuracion | nu
       <Boton type="submit" disabled={pendiente}>
         {pendiente ? "Guardando…" : "Guardar"}
       </Boton>
+    </form>
+  );
+}
+
+export function FormularioFotoPortada({ url }: { url: string | null }) {
+  const [r, accion, pendiente] = useActionState(guardarFotoPortada, {});
+  return (
+    <form action={accion} className="flex flex-col gap-[10px]">
+      <h2 className="h3">Foto de portada</h2>
+      <div className="mute">La foto grande de la página de inicio. Conviene horizontal y bien iluminada.</div>
+      <Foto
+        url={url}
+        alt="Foto de portada actual"
+        marcador="[Sin foto de portada]"
+        className="h-[160px]"
+        sizes="480px"
+      />
+      <FotoUnica name="foto" etiqueta="Nueva foto" camara={false} />
+      <Aviso r={r} />
+      <div className="flex gap-2">
+        <Boton type="submit" tamano="chico" className="flex-1" disabled={pendiente}>
+          {pendiente ? "Subiendo…" : "Guardar foto"}
+        </Boton>
+        {url ? (
+          <Boton
+            type="submit"
+            name="quitar"
+            value="1"
+            variante="borde"
+            tamano="chico"
+            disabled={pendiente}
+            formNoValidate
+          >
+            Quitar
+          </Boton>
+        ) : null}
+      </div>
     </form>
   );
 }

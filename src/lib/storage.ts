@@ -92,6 +92,18 @@ export async function subirFotoInstrumentoCliente(
   return supabase.storage.from(BUCKET_PUBLICO).getPublicUrl(nombre).data.publicUrl;
 }
 
+/** Home hero photo (public bucket, admin only). */
+export async function subirFotoPortada(file: File): Promise<string> {
+  const supabase = await crearClienteServidor();
+  const nombre = `portada/${Date.now()}.${extension(file)}`;
+  const { error } = await supabase.storage.from(BUCKET_PUBLICO).upload(nombre, file, {
+    contentType: file.type || "image/jpeg",
+    upsert: false,
+  });
+  if (error) throw new Error(`No se pudo subir la foto: ${error.message}`);
+  return supabase.storage.from(BUCKET_PUBLICO).getPublicUrl(nombre).data.publicUrl;
+}
+
 /** Client-uploaded listing photo (public bucket, client folder). */
 export async function subirFotoPublicacionCliente(
   perfilId: string,
