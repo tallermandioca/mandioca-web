@@ -10,6 +10,8 @@ export const PLANTILLA_LISTO =
   "Hola {nombre}! Tu {instrumento} está listo para retirar. Orden #{numero}. Te esperamos en el taller.";
 export const PLANTILLA_RECIBIDO =
   "Hola {nombre}! Recibimos tu {instrumento} en el Taller Mandioca. Orden #{numero}. Podés seguirla desde tu cuenta: {link}";
+export const PLANTILLA_DEUDA =
+  "Hola {nombre}! ¿Cómo andás? Te escribimos del Taller Mandioca. Te recordamos que quedó un saldo pendiente de {total} ({detalle}). Cuando puedas, avisanos y lo coordinamos. ¡Gracias!";
 export const PLANTILLA_PRESUPUESTO =
   "Hola {nombre}! Ya tenemos el presupuesto de tu {instrumento} (orden #{numero}): {importe}. Podés aprobarlo desde tu cuenta: {link}";
 
@@ -20,6 +22,8 @@ export interface DatosAviso {
   fecha?: string;
   importe?: string;
   link?: string;
+  total?: string;
+  detalle?: string;
 }
 
 export function textoAviso(

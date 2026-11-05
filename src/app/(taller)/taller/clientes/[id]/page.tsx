@@ -6,9 +6,11 @@ import { ItemOrden } from "@/components/taller/Ordenes";
 import { BotonEnlace } from "@/components/ui/Boton";
 import { Nota, Pill, PuntoSemaforo } from "@/components/ui/Etiquetas";
 import { requerirRol } from "@/lib/auth";
-import { clienteConTodo } from "@/lib/datos/taller";
+import { clienteConTodo, configuracion } from "@/lib/datos/taller";
+import { ordenesConDeuda } from "@/lib/domain/pagos";
+import { PLANTILLA_DEUDA, textoAviso } from "@/lib/notificaciones/avisos";
 import { ETIQUETA_SEMAFORO, semaforo } from "@/lib/domain/revision";
-import { fechaDesdeIso, formatearFecha, nombreInstrumento } from "@/lib/formato";
+import { fechaDesdeIso, formatearFecha, formatearImporte, nombreInstrumento } from "@/lib/formato";
 import { hoyArgentina } from "@/lib/hoy";
 import { linkWhatsapp } from "@/lib/notificaciones/whatsapp";
 import { FormularioCliente } from "../FormularioCliente";
@@ -18,9 +20,31 @@ export const dynamic = "force-dynamic";
 export default async function FichaCliente({ params }: PageProps<"/taller/clientes/[id]">) {
   await requerirRol("admin", "/taller/clientes");
   const { id } = await params;
-  const datos = await clienteConTodo(id);
+  const [datos, config] = await Promise.all([clienteConTodo(id), configuracion()]);
   if (!datos) notFound();
-  const { cliente, instrumentos, ordenes } = datos;
+  const { cliente, instrumentos, ordenes, pagadoPorOrden } = datos;
+  const deudas = ordenesConDeuda(ordenes, pagadoPorOrden);
+  const totalDeuda = deudas.reduce((s, d) => s + d.saldo, 0);
+  const detalleDeuda = deudas
+    .map(
+      (d) =>
+        `orden #${String(d.orden.numero).padStart(4, "0")}${
+          d.orden.instrumentos ? `, ${nombreInstrumento(d.orden.instrumentos)}` : ""
+        }`,
+    )
+    .join("; ");
+  const waDeuda =
+    totalDeuda > 0
+      ? linkWhatsapp(
+          cliente.whatsapp,
+          textoAviso(config?.texto_aviso_deuda, PLANTILLA_DEUDA, {
+            nombre: cliente.nombre,
+            instrumento: "",
+            total: formatearImporte(totalDeuda),
+            detalle: detalleDeuda,
+          }),
+        )
+      : null;
   const hoy = hoyArgentina();
   const wa = linkWhatsapp(
     cliente.whatsapp,
@@ -58,6 +82,33 @@ export default async function FichaCliente({ params }: PageProps<"/taller/client
           </BotonEnlace>
         ) : null}
       </div>
+
+      {totalDeuda > 0 ? (
+        <section className="card flex flex-col gap-2 border-red p-3">
+          <div className="flex items-baseline justify-between gap-2">
+            <h2 className="h3">Saldo pendiente</h2>
+            <span className="font-display text-xl font-bold text-red">{formatearImporte(totalDeuda)}</span>
+          </div>
+          <ul className="flex flex-col gap-1 text-sm">
+            {deudas.map((d) => (
+              <li key={d.orden.id}>
+                <Link href={`/taller/ordenes/${d.orden.id}`} className="font-semibold text-ink">
+                  #{String(d.orden.numero).padStart(4, "0")}
+                </Link>{" "}
+                {d.orden.instrumentos ? nombreInstrumento(d.orden.instrumentos) : ""} · debe{" "}
+                {formatearImporte(d.saldo)}
+              </li>
+            ))}
+          </ul>
+          {waDeuda ? (
+            <BotonEnlace href={waDeuda} externo tamano="chico">
+              Recordar saldo por WhatsApp
+            </BotonEnlace>
+          ) : (
+            <Nota>El cliente no tiene WhatsApp cargado.</Nota>
+          )}
+        </section>
+      ) : null}
 
       <div className="flex items-center justify-between">
         <h2 className="h2">Instrumentos</h2>

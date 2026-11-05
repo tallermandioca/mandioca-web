@@ -14,13 +14,15 @@ import { formatearFecha, formatearImporte, nombreInstrumento } from "@/lib/forma
 import {
   PLANTILLA_LISTO,
   PLANTILLA_PRESUPUESTO,
+  PLANTILLA_DEUDA,
   PLANTILLA_RECIBIDO,
   textoAviso,
 } from "@/lib/notificaciones/avisos";
 import { linkWhatsapp } from "@/lib/notificaciones/whatsapp";
 import { resolverFotos } from "@/lib/storage";
-import { borrarFoto } from "./acciones";
-import { FormularioDetalles, FormularioEstado, FormularioFotos } from "./FormulariosOrden";
+import { saldoOrden, sumarPagos, totalOrden } from "@/lib/domain/pagos";
+import { borrarFoto, borrarPago } from "./acciones";
+import { FormularioDetalles, FormularioEstado, FormularioFotos, FormularioPago } from "./FormulariosOrden";
 
 export const dynamic = "force-dynamic";
 
@@ -52,6 +54,23 @@ export default async function DetalleOrden({ params, searchParams }: PageProps<"
         ? textoAviso(null, PLANTILLA_PRESUPUESTO, valores)
         : textoAviso(null, PLANTILLA_RECIBIDO, valores);
   const wa = linkWhatsapp(cliente?.whatsapp, mensaje);
+
+  const pagos = [...orden.pagos].sort((a, b) => a.fecha.localeCompare(b.fecha));
+  const total = totalOrden(orden);
+  const pagado = sumarPagos(pagos);
+  const saldo = saldoOrden(orden, pagado);
+  const waDeuda =
+    saldo > 0
+      ? linkWhatsapp(
+          cliente?.whatsapp,
+          textoAviso(config?.texto_aviso_deuda, PLANTILLA_DEUDA, {
+            nombre: cliente?.nombre ?? "",
+            instrumento,
+            total: formatearImporte(saldo),
+            detalle: `orden #${valores.numero}, ${instrumento}`,
+          }),
+        )
+      : null;
 
   const fotos = [...orden.fotos_orden].sort((a, b) => a.orden - b.orden);
   const urls = await resolverFotos(fotos.map((f) => f.url));
@@ -143,6 +162,56 @@ export default async function DetalleOrden({ params, searchParams }: PageProps<"
         proximaRevision={orden.proxima_revision}
         notas={orden.notas_internas_orden?.texto ?? ""}
       />
+
+      {orden.estado !== "cancelado" ? (
+        <section className="card flex flex-col gap-2 p-3">
+          <h2 className="h3">Pagos</h2>
+          <div className="grid grid-cols-3 gap-2 text-center">
+            <div>
+              <div className="mute">Total</div>
+              <div className="font-semibold">{total > 0 ? formatearImporte(total) : "—"}</div>
+            </div>
+            <div>
+              <div className="mute">Pagado</div>
+              <div className="font-semibold">{formatearImporte(pagado)}</div>
+            </div>
+            <div>
+              <div className="mute">Saldo</div>
+              <div className={`font-semibold ${saldo > 0 ? "text-red" : "text-ok-t"}`}>
+                {total > 0 ? formatearImporte(saldo) : "—"}
+              </div>
+            </div>
+          </div>
+          {total === 0 ? (
+            <div className="mute">Cargá el presupuesto o el importe para calcular el saldo.</div>
+          ) : null}
+          {pagos.length > 0 ? (
+            <ul className="flex flex-col divide-y divide-line">
+              {pagos.map((p) => (
+                <li key={p.id} className="flex items-center justify-between gap-2 py-2 text-sm">
+                  <span>
+                    <b>{formatearImporte(p.monto)}</b> · {formatearFecha(p.fecha)}
+                    {p.nota ? <span className="mute"> · {p.nota}</span> : null}
+                  </span>
+                  <form action={borrarPago}>
+                    <input type="hidden" name="id" value={orden.id} />
+                    <input type="hidden" name="pago_id" value={p.id} />
+                    <button type="submit" className="text-xs font-semibold text-mute">
+                      Quitar
+                    </button>
+                  </form>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+          <FormularioPago ordenId={orden.id} saldo={saldo} />
+          {waDeuda ? (
+            <BotonEnlace href={waDeuda} externo tamano="chico">
+              Recordar saldo por WhatsApp
+            </BotonEnlace>
+          ) : null}
+        </section>
+      ) : null}
 
       <section className="card flex flex-col gap-2 p-3">
         <h2 className="h3">Fotos</h2>

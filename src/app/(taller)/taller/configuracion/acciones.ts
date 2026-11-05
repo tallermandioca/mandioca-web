@@ -30,6 +30,7 @@ export async function guardarConfiguracion(_e: Resultado, formData: FormData): P
     instagram_user: texto(formData, "instagram_user")?.replace(/^@/, "") ?? null,
     texto_aviso_calibracion: texto(formData, "texto_aviso_calibracion"),
     texto_aviso_listo: texto(formData, "texto_aviso_listo"),
+    texto_aviso_deuda: texto(formData, "texto_aviso_deuda"),
     moderacion_automatica: formData.get("moderacion_automatica") !== null,
   });
   if (error) return { error: "No se pudo guardar: " + error.message };

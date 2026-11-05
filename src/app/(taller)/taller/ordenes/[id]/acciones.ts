@@ -166,6 +166,39 @@ export async function agregarFotos(_e: Resultado, formData: FormData): Promise<R
   };
 }
 
+export async function agregarPago(_e: Resultado, formData: FormData): Promise<Resultado> {
+  await requerirRol("admin", "/taller/ordenes");
+  const id = String(formData.get("id") ?? "");
+  // "Pagó todo" submits the balance as `monto_total`; otherwise the typed amount.
+  const monto = parsearImporte(formData.get("monto_total") ?? formData.get("monto"));
+  if (!id) return { error: "Falta la orden." };
+  if (!monto || monto <= 0) return { error: "Poné el monto que pagó." };
+  const fecha = String(formData.get("fecha") ?? "");
+  const nota = String(formData.get("nota") ?? "").trim() || null;
+  const supabase = await crearClienteServidor();
+  const { error } = await supabase.from("pagos").insert({
+    orden_id: id,
+    monto,
+    nota,
+    ...(fechaValida(fecha) ? { fecha } : {}),
+  });
+  if (error) return { error: "No se pudo guardar el pago: " + error.message };
+  refrescar(id);
+  revalidatePath("/taller/clientes", "layout");
+  return { mensaje: "Pago registrado." };
+}
+
+export async function borrarPago(formData: FormData): Promise<void> {
+  await requerirRol("admin", "/taller/ordenes");
+  const id = String(formData.get("id") ?? "");
+  const pagoId = String(formData.get("pago_id") ?? "");
+  if (!id || !pagoId) return;
+  const supabase = await crearClienteServidor();
+  await supabase.from("pagos").delete().eq("id", pagoId).eq("orden_id", id);
+  refrescar(id);
+  revalidatePath("/taller/clientes", "layout");
+}
+
 export async function borrarFoto(formData: FormData): Promise<void> {
   await requerirRol("admin", "/taller/ordenes");
   const id = String(formData.get("id") ?? "");

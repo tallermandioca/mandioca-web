@@ -4,6 +4,7 @@ import { useActionState, useState } from "react";
 import { CamaraFotos } from "@/components/taller/CamaraFotos";
 import { Dictado } from "@/components/taller/Dictado";
 import { Boton } from "@/components/ui/Boton";
+import { CampoImporte } from "@/components/ui/CampoImporte";
 import { formatearFecha } from "@/lib/formato";
 import { cerrarTrabajo } from "../acciones";
 
@@ -40,7 +41,7 @@ export function FormularioCerrar(p: Props) {
       <div className="grid grid-cols-2 gap-[10px]">
         <label className="field">
           Importe ($, opcional)
-          <input name="importe" inputMode="numeric" defaultValue={p.importeInicial ?? ""} />
+          <CampoImporte name="importe" defaultValue={p.importeInicial} />
         </label>
         <label className="field">
           Cuerdas puestas

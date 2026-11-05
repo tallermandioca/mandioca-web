@@ -4,8 +4,10 @@ import { useActionState } from "react";
 import { CamaraFotos } from "@/components/taller/CamaraFotos";
 import { Dictado } from "@/components/taller/Dictado";
 import { Boton } from "@/components/ui/Boton";
+import { CampoImporte } from "@/components/ui/CampoImporte";
 import { ETIQUETA_ESTADO, type EstadoOrden } from "@/lib/domain/ordenes";
-import { agregarFotos, cambiarEstado, guardarDetalles, type Resultado } from "./acciones";
+import { formatearImporte } from "@/lib/formato";
+import { agregarFotos, agregarPago, cambiarEstado, guardarDetalles, type Resultado } from "./acciones";
 
 function Aviso({ r }: { r: Resultado }) {
   if (r.error) {
@@ -79,7 +81,7 @@ export function FormularioDetalles(p: PropsDetalles) {
       <div className="grid grid-cols-2 gap-[10px]">
         <label className="field">
           Presupuesto ($)
-          <input name="presupuesto" inputMode="numeric" defaultValue={p.presupuesto ?? ""} />
+          <CampoImporte name="presupuesto" defaultValue={p.presupuesto} />
         </label>
         <label className="field">
           Fecha estimada
@@ -92,7 +94,7 @@ export function FormularioDetalles(p: PropsDetalles) {
           <div className="grid grid-cols-2 gap-[10px]">
             <label className="field">
               Importe ($)
-              <input name="importe" inputMode="numeric" defaultValue={p.importe ?? ""} />
+              <CampoImporte name="importe" defaultValue={p.importe} />
             </label>
             <label className="field">
               Cuerdas puestas
@@ -113,6 +115,47 @@ export function FormularioDetalles(p: PropsDetalles) {
       <Boton type="submit" variante="oscuro" tamano="chico" disabled={pendiente}>
         {pendiente ? "Guardando…" : "Guardar"}
       </Boton>
+    </form>
+  );
+}
+
+export function FormularioPago({ ordenId, saldo }: { ordenId: string; saldo: number }) {
+  const [r, accion, pendiente] = useActionState(agregarPago, {});
+  return (
+    <form action={accion} className="flex flex-col gap-[10px]">
+      <input type="hidden" name="id" value={ordenId} />
+      <div className="grid grid-cols-2 gap-[10px]">
+        <label className="field">
+          Monto ($)
+          <CampoImporte name="monto" placeholder="Ej: $ 50.000" />
+        </label>
+        <label className="field">
+          Fecha
+          <input type="date" name="fecha" />
+        </label>
+      </div>
+      <label className="field">
+        Nota (opcional)
+        <input name="nota" placeholder="Seña, transferencia, efectivo…" />
+      </label>
+      <Aviso r={r} />
+      <div className="flex gap-2">
+        <Boton type="submit" variante="oscuro" tamano="chico" className="flex-1" disabled={pendiente}>
+          {pendiente ? "Guardando…" : "Registrar pago"}
+        </Boton>
+        {saldo > 0 ? (
+          <Boton
+            type="submit"
+            name="monto_total"
+            value={String(saldo)}
+            variante="borde"
+            tamano="chico"
+            disabled={pendiente}
+          >
+            Pagó todo ({formatearImporte(saldo)})
+          </Boton>
+        ) : null}
+      </div>
     </form>
   );
 }

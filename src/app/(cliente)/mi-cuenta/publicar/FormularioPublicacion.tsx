@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { CamaraFotos } from "@/components/taller/CamaraFotos";
 import { Boton } from "@/components/ui/Boton";
+import { CampoImporte } from "@/components/ui/CampoImporte";
 import { ETIQUETA_ESTADO_INSTRUMENTO } from "@/lib/formato";
 import { crearPublicacion, guardarPublicacion, type Resultado } from "./acciones";
 
@@ -71,13 +72,7 @@ export function FormularioPublicacion({
       <div className="grid grid-cols-2 gap-[10px]">
         <label className="field">
           Precio ($)
-          <input
-            name="precio"
-            inputMode="numeric"
-            defaultValue={valores.precio ?? ""}
-            required
-            placeholder="850000"
-          />
+          <CampoImporte name="precio" defaultValue={valores.precio} required placeholder="$ 850.000" />
         </label>
         <label className="field">
           Estado

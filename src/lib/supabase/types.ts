@@ -33,6 +33,7 @@ export type Database = {
           moderacion_automatica: boolean;
           nombre_taller: string;
           texto_aviso_calibracion: string | null;
+          texto_aviso_deuda: string | null;
           texto_aviso_listo: string | null;
           updated_at: string;
           whatsapp: string | null;
@@ -51,6 +52,7 @@ export type Database = {
           moderacion_automatica?: boolean;
           nombre_taller?: string;
           texto_aviso_calibracion?: string | null;
+          texto_aviso_deuda?: string | null;
           texto_aviso_listo?: string | null;
           updated_at?: string;
           whatsapp?: string | null;
@@ -68,6 +70,7 @@ export type Database = {
           moderacion_automatica?: boolean;
           nombre_taller?: string;
           texto_aviso_calibracion?: string | null;
+          texto_aviso_deuda?: string | null;
           texto_aviso_listo?: string | null;
           updated_at?: string;
           whatsapp?: string | null;
@@ -426,6 +429,49 @@ export type Database = {
             columns: ["tipo_trabajo_id"];
             isOneToOne: false;
             referencedRelation: "tipos_trabajo";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      pagos: {
+        Row: {
+          created_at: string;
+          fecha: string;
+          id: string;
+          monto: number;
+          nota: string | null;
+          orden_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          fecha?: string;
+          id?: string;
+          monto: number;
+          nota?: string | null;
+          orden_id: string;
+        };
+        Update: {
+          created_at?: string;
+          fecha?: string;
+          id?: string;
+          monto?: number;
+          nota?: string | null;
+          orden_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "pagos_orden_id_fkey";
+            columns: ["orden_id"];
+            isOneToOne: false;
+            referencedRelation: "historial_publico";
+            referencedColumns: ["orden_id"];
+          },
+          {
+            foreignKeyName: "pagos_orden_id_fkey";
+            columns: ["orden_id"];
+            isOneToOne: false;
+            referencedRelation: "ordenes";
             referencedColumns: ["id"];
           },
         ];

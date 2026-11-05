@@ -79,6 +79,22 @@ export function parsearImporte(valor: FormDataEntryValue | string | null | undef
   return Number.isFinite(n) && n >= 0 ? Math.round(n * 100) / 100 : null;
 }
 
+/**
+ * Formats an amount as the user types it: "105000" -> "$ 105.000", "1500,5" -> "$ 1.500,5".
+ * Only digits and one decimal comma survive; the result is still readable by parsearImporte.
+ */
+export function formatearImporteEscrito(valor: string | number | null | undefined): string {
+  if (valor === null || valor === undefined) return "";
+  const texto =
+    typeof valor === "number" ? String(valor).replace(".", ",") : String(valor).replace(/[^\d,]/g, "");
+  const [entero = "", ...resto] = texto.split(",");
+  const digitos = entero.replace(/^0+(?=\d)/, "");
+  if (!digitos && resto.length === 0) return "";
+  const conPuntos = (digitos || "0").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  const decimales = resto.length > 0 ? "," + resto.join("").slice(0, 2) : "";
+  return `$ ${conPuntos}${decimales}`;
+}
+
 export const ETIQUETA_TIPO_INSTRUMENTO: Record<string, string> = {
   electrica: "Guitarra eléctrica",
   acustica: "Guitarra acústica",

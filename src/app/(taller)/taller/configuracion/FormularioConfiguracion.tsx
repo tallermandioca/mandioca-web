@@ -3,8 +3,10 @@
 import { useActionState } from "react";
 import { FotoUnica } from "@/components/taller/FotoUnica";
 import { Boton } from "@/components/ui/Boton";
+import { CampoImporte } from "@/components/ui/CampoImporte";
 import { Foto } from "@/components/ui/Foto";
 import type { Configuracion } from "@/lib/datos/taller";
+import { PLANTILLA_DEUDA } from "@/lib/notificaciones/avisos";
 import { guardarFotoPortada, guardarPlantilla, guardarConfiguracion, type Resultado } from "./acciones";
 import type { TipoTrabajo } from "@/lib/datos/taller";
 
@@ -94,6 +96,15 @@ export function FormularioConfiguracion({ config }: { config: Configuracion | nu
         Aviso de &quot;listo para retirar&quot;
         <textarea name="texto_aviso_listo" rows={3} defaultValue={config?.texto_aviso_listo ?? ""} />
       </label>
+      <label className="field">
+        Recordatorio de saldo pendiente (usa {"{nombre}"}, {"{total}"} y {"{detalle}"})
+        <textarea
+          name="texto_aviso_deuda"
+          rows={3}
+          defaultValue={config?.texto_aviso_deuda ?? ""}
+          placeholder={PLANTILLA_DEUDA}
+        />
+      </label>
 
       <h2 className="h3 mt-2">Muestrario</h2>
       <label className="card flex min-h-12 items-center gap-3 p-3">
@@ -178,7 +189,7 @@ export function FormularioPlantilla({ plantilla }: { plantilla: TipoTrabajo | nu
         </label>
         <label className="field">
           Precio base ($)
-          <input name="precio_base" inputMode="numeric" defaultValue={plantilla?.precio_base ?? ""} />
+          <CampoImporte name="precio_base" defaultValue={plantilla?.precio_base} />
         </label>
         <label className="field">
           Orden

@@ -6,6 +6,7 @@ import {
   formatearImporte,
   formatearMesAnio,
   nombreInstrumento,
+  formatearImporteEscrito,
   parsearImporte,
 } from "./formato";
 
@@ -46,5 +47,25 @@ describe("parsearImporte", () => {
     expect(parsearImporte("")).toBeNull();
     expect(parsearImporte("abc")).toBeNull();
     expect(parsearImporte("-5")).toBeNull();
+  });
+});
+
+describe("formatearImporteEscrito", () => {
+  it("adds the peso sign and thousands dots while typing", () => {
+    expect(formatearImporteEscrito("105000")).toBe("$ 105.000");
+    expect(formatearImporteEscrito("$ 1.250.0009")).toBe("$ 12.500.009");
+    expect(formatearImporteEscrito("1500,5")).toBe("$ 1.500,5");
+    expect(formatearImporteEscrito("1500,555")).toBe("$ 1.500,55");
+    expect(formatearImporteEscrito(105000)).toBe("$ 105.000");
+    expect(formatearImporteEscrito(12500.5)).toBe("$ 12.500,5");
+    expect(formatearImporteEscrito("")).toBe("");
+    expect(formatearImporteEscrito("$ ")).toBe("");
+    expect(formatearImporteEscrito(null)).toBe("");
+  });
+
+  it("round-trips through parsearImporte", () => {
+    for (const n of [0, 5, 999, 1000, 105000, 1250000, 12500.5]) {
+      expect(parsearImporte(formatearImporteEscrito(n))).toBe(n);
+    }
   });
 });

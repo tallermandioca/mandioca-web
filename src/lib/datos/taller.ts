@@ -184,7 +184,22 @@ export async function clienteConTodo(id: string) {
       .order("numero", { ascending: false }),
   ]);
   if (!cliente) return null;
-  return { cliente, instrumentos: instrumentos ?? [], ordenes: (ordenes ?? []) as OrdenResumen[] };
+  const lista = (ordenes ?? []) as OrdenResumen[];
+  const { data: pagos } =
+    lista.length > 0
+      ? await supabase
+          .from("pagos")
+          .select("orden_id, monto")
+          .in(
+            "orden_id",
+            lista.map((o) => o.id),
+          )
+      : { data: [] };
+  const pagadoPorOrden = new Map<string, number>();
+  for (const p of pagos ?? []) {
+    pagadoPorOrden.set(p.orden_id, (pagadoPorOrden.get(p.orden_id) ?? 0) + Number(p.monto));
+  }
+  return { cliente, instrumentos: instrumentos ?? [], ordenes: lista, pagadoPorOrden };
 }
 
 export type TipoTrabajo = Tablas["tipos_trabajo"]["Row"];
@@ -217,6 +232,7 @@ export type OrdenCompleta = Tablas["ordenes"]["Row"] & {
   tipos_trabajo: TipoTrabajo | null;
   fotos_orden: Tablas["fotos_orden"]["Row"][];
   notas_internas_orden: { texto: string } | null;
+  pagos: Tablas["pagos"]["Row"][];
 };
 
 export async function ordenCompleta(id: string): Promise<OrdenCompleta | null> {
@@ -224,7 +240,7 @@ export async function ordenCompleta(id: string): Promise<OrdenCompleta | null> {
   const { data } = await supabase
     .from("ordenes")
     .select(
-      "*, instrumentos(*), perfiles!ordenes_cliente_id_fkey(id, nombre, whatsapp, email, canal_preferido), tipos_trabajo(*), fotos_orden(*), notas_internas_orden(texto)",
+      "*, instrumentos(*), perfiles!ordenes_cliente_id_fkey(id, nombre, whatsapp, email, canal_preferido), tipos_trabajo(*), fotos_orden(*), notas_internas_orden(texto), pagos(*)",
     )
     .eq("id", id)
     .maybeSingle();
