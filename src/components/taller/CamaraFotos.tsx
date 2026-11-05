@@ -1,6 +1,6 @@
 "use client";
 
-import { Camera, X } from "lucide-react";
+import { Camera, Images, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { comprimirImagen } from "@/lib/imagenes";
 
@@ -11,7 +11,7 @@ interface Props {
 }
 
 /**
- * Photo picker for forms. On phones `capture` opens the camera directly.
+ * Photo picker for forms: "Sacar foto" opens the camera on phones, "Galería" the photo library.
  * Photos are compressed on the device before they reach the form.
  * Keeps a DataTransfer so removed photos are not submitted.
  */
@@ -61,25 +61,46 @@ export function CamaraFotos({ name, etiqueta, maximo = 6 }: Props) {
           </div>
         ))}
         {archivos.length < maximo ? (
-          <label className="flex size-16 cursor-pointer flex-col items-center justify-center gap-1 rounded-md border border-dashed border-ink text-[10px] font-semibold">
-            <Camera className="size-5" aria-hidden />
-            {procesando ? "…" : "Sacar foto"}
-            <input
-              type="file"
-              accept="image/*"
-              capture="environment"
-              multiple
-              className="sr-only"
-              onChange={(e) => {
-                const lista = Array.from(e.target.files ?? []);
-                e.target.value = "";
-                void agregar(lista);
-              }}
-            />
-          </label>
+          <>
+            <BotonFoto etiqueta={procesando ? "…" : "Sacar foto"} camara multiple onElegir={agregar} />
+            <BotonFoto etiqueta={procesando ? "…" : "Galería"} multiple onElegir={agregar} />
+          </>
         ) : null}
       </div>
       <input ref={input} type="file" name={name} multiple className="hidden" tabIndex={-1} aria-hidden />
     </div>
+  );
+}
+
+/** Dashed square that opens the file picker; `camara` asks phones to open the camera directly. */
+export function BotonFoto({
+  etiqueta,
+  camara,
+  multiple,
+  onElegir,
+}: {
+  etiqueta: string;
+  camara?: boolean;
+  multiple?: boolean;
+  onElegir: (archivos: File[]) => void | Promise<void>;
+}) {
+  const Icono = camara ? Camera : Images;
+  return (
+    <label className="flex size-16 cursor-pointer flex-col items-center justify-center gap-1 rounded-md border border-dashed border-ink text-[10px] font-semibold">
+      <Icono className="size-5" aria-hidden />
+      {etiqueta}
+      <input
+        type="file"
+        accept="image/*"
+        capture={camara ? "environment" : undefined}
+        multiple={multiple}
+        className="sr-only"
+        onChange={(e) => {
+          const lista = Array.from(e.target.files ?? []);
+          e.target.value = "";
+          void onElegir(lista);
+        }}
+      />
+    </label>
   );
 }

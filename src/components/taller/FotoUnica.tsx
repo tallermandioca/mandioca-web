@@ -1,18 +1,17 @@
 "use client";
 
-import { Camera, X } from "lucide-react";
+import { X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { comprimirImagen } from "@/lib/imagenes";
+import { BotonFoto } from "./CamaraFotos";
 
 interface Props {
   name: string;
   etiqueta: string;
-  /** Opens the camera directly on phones; false lets the user pick from the gallery. */
-  camara?: boolean;
 }
 
 /** Single-photo picker (e.g. serial number). Compresses before the form is submitted. */
-export function FotoUnica({ name, etiqueta, camara = true }: Props) {
+export function FotoUnica({ name, etiqueta }: Props) {
   const input = useRef<HTMLInputElement>(null);
   const [archivo, setArchivo] = useState<File | null>(null);
   const [procesando, setProcesando] = useState(false);
@@ -33,6 +32,14 @@ export function FotoUnica({ name, etiqueta, camara = true }: Props) {
     }
   }
 
+  async function elegir(archivos: File[]) {
+    const f = archivos[0];
+    if (!f) return;
+    setProcesando(true);
+    sincronizar(await comprimirImagen(f));
+    setProcesando(false);
+  }
+
   return (
     <div className="flex flex-col gap-1">
       <div className="mute">{etiqueta}</div>
@@ -51,24 +58,10 @@ export function FotoUnica({ name, etiqueta, camara = true }: Props) {
             </button>
           </div>
         ) : (
-          <label className="flex size-16 cursor-pointer flex-col items-center justify-center gap-1 rounded-md border border-dashed border-ink text-[10px] font-semibold">
-            <Camera className="size-5" aria-hidden />
-            {procesando ? "…" : camara ? "Sacar foto" : "Elegir foto"}
-            <input
-              type="file"
-              accept="image/*"
-              capture={camara ? "environment" : undefined}
-              className="sr-only"
-              onChange={async (e) => {
-                const f = e.target.files?.[0] ?? null;
-                e.target.value = "";
-                if (!f) return;
-                setProcesando(true);
-                sincronizar(await comprimirImagen(f));
-                setProcesando(false);
-              }}
-            />
-          </label>
+          <>
+            <BotonFoto etiqueta={procesando ? "…" : "Sacar foto"} camara onElegir={elegir} />
+            <BotonFoto etiqueta={procesando ? "…" : "Galería"} onElegir={elegir} />
+          </>
         )}
       </div>
       <input ref={input} type="file" name={name} className="hidden" tabIndex={-1} aria-hidden />

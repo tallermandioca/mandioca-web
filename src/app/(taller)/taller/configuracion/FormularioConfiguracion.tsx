@@ -130,7 +130,7 @@ export function FormularioFotoPortada({ url }: { url: string | null }) {
         className="h-[160px]"
         sizes="480px"
       />
-      <FotoUnica name="foto" etiqueta="Nueva foto" camara={false} />
+      <FotoUnica name="foto" etiqueta="Nueva foto" />
       <Aviso r={r} />
       <div className="flex gap-2">
         <Boton type="submit" tamano="chico" className="flex-1" disabled={pendiente}>
